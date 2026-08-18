@@ -1,8 +1,8 @@
-import { resizeCanvas } from "./graph.js";
+import { renderGraph, resizeCanvas, setupCanvas } from "./graph.js";
 
-const canvas = document.getElementById("phonemeGraph");
-const ctx = canvas.getContext("2d");
+const superSampleLvl = 2;
+const ctx = setupCanvas(superSampleLvl, "2d")
 
-window.addEventListener('resize',() => {resizeCanvas(canvas)});
+window.addEventListener('resize',() => {resizeCanvas(ctx, superSampleLvl); renderGraph(ctx)});
 
-resizeCanvas(canvas);
+renderGraph(ctx);
