@@ -1,16 +1,13 @@
 from phonemizer.backend import EspeakBackend
 from phonemizer.punctuation import Punctuation
-from phonemizer.separator import Separator
 
 def get_available_languages():
-    return EspeakBackend.is_available()
+    return EspeakBackend.supported_languages()
 
 def init_backend(language):
 
     backend = EspeakBackend(language, with_stress=True)
-    separator = Separator(phone=' ',word=None)
-
-    return backend, separator
+    return backend
 
 def generate_word_occurance_array(text):
 
@@ -113,31 +110,6 @@ def generate_rhyme_paths(lexicon, word_array):
     cleaned = remove_contained_lists(rhyme_paths)
     return cleaned
 
-if __name__ == '__main__':
-    text = '''
-    No rays from the holy Heaven come down
-    On the long night-time of that town;
-    But light from out the lurid sea
-    Streams up the turrets silently—
-    Gleams up the pinnacles far and free—
-    Up domes—up spires—up kingly halls—
-    Up fanes—up Babylon-like walls—
-    Up shadowy long-forgotten bowers
-    Of sculptured ivy and stone flowers—
-    Up many and many a marvellous shrine
-    Whose wreathed friezes intertwine
-    The viol, the violet, and the vine.
-    Resignedly beneath the sky
-    The melancholy waters lie.
-    So blend the turrets and shadows there
-    That all seem pendulous in air,
-    While from a proud tower in the town
-    Death looks gigantically down.
-    '''
+
  
-    backend, separator = init_backend("en-us")
-    lexicon, word_array, pos_map = phonemize_text(text,backend, separator)
-    paths = generate_rhyme_paths(lexicon,word_array)
-    print(word_array)
-    print(pos_map)   
-    print(paths)  
+
