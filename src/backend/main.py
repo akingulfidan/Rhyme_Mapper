@@ -14,8 +14,8 @@ class userInput(BaseModel):
 
 
 @app.post("/generate")
-async def generatePhonemeGraph(userInput: userInput):
-    print(userInput.input_text)
+async def generate_phoneme_graph(user_input: userInput):
+    print(user_input.input_text)
     return {"message": "Hello Back"}
     
 

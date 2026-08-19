@@ -19,7 +19,6 @@ genButton.addEventListener('click', async () => {
         }
     );
     
-    console.log("request sent");
     let result = await response.json();
     console.log(result)
 });
