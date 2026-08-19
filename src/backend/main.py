@@ -3,6 +3,8 @@ from pydantic import BaseModel
 
 from pathlib import Path
 
+from phoneme_analysis import get_available_languages, init_backend, phonemize_text, generate_rhyme_paths
+
 BASE_DIR = Path(__file__).resolve().parent
 FRONTEND_DIR = BASE_DIR.parent / "frontend"
 
