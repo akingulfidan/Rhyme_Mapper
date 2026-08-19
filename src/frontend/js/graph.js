@@ -38,6 +38,8 @@ function drawPhoneme(ctx, x,y,stress) {
 }
 
 export function renderGraph(ctx){
+  
   let canvas = ctx.canvas
   drawPhoneme(ctx, canvas.drawingWidth/2,canvas.drawingHeight/2,50);
+
 }
