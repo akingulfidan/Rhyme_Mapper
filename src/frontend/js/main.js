@@ -1,11 +1,14 @@
-import { renderGraph, resizeCanvas, setupCanvas } from "./graph.js";
+import { RhymeGraph } from "./graph.js";
 
-const superSampleLvl = 2;
-const ctx = setupCanvas(superSampleLvl, "2d");
+// Initialize graph canvas
 
-const textInput = document.getElementById("textInput");
-const genButton = document.getElementById("GenerateButton");
+const rhymeGraph = new RhymeGraph(2);
 
+window.addEventListener('resize',() => {rhymeGraph.resizeCanvas(), rhymeGraph.renderGraph()});
+
+rhymeGraph.renderGraph();
+
+// Language list dropdown
 
 let lang_response = await fetch("http://localhost:8000/lang");
 const languages = await lang_response.json()
@@ -22,6 +25,10 @@ for (const [code, name] of Object.entries(languages)) {
     lang_dropdown.appendChild(option);
 }
 
+// Textarea and generate button
+
+const textInput = document.getElementById("textInput");
+const genButton = document.getElementById("GenerateButton");
 
 genButton.addEventListener('click', async () => {
     let response = await fetch("http://localhost:8000/generate",
@@ -43,10 +50,3 @@ genButton.addEventListener('click', async () => {
 
 });
 
-
-window.addEventListener('resize',() => {resizeCanvas(ctx, superSampleLvl); renderGraph(ctx)});
-
-
-
-
-renderGraph(ctx);

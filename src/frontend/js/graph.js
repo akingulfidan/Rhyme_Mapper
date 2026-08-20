@@ -1,45 +1,50 @@
+export class RhymeGraph {
 
-export function resizeCanvas(ctx, resFactor) {
+  constructor(SSAA, context = "2d"){ // SSAA -> Super Sampling Anti-Aliasing
 
-  let canvas = ctx.canvas;
+    let canvas = document.createElement("canvas");
+    document.body.prepend(canvas);
+    let ctx = canvas.getContext(context);
+    this.SSAA = SSAA
+    this.ctx = ctx
 
-  canvas.drawingWidth = window.innerWidth*0.7;
-  canvas.drawingHeight = window.innerHeight;
+    this.resizeCanvas()
 
-  canvas.width = canvas.drawingWidth*resFactor;
-  canvas.height = canvas.drawingHeight*resFactor;
+  }
 
-  canvas.style.width = `${canvas.drawingWidth}px`; 
-  canvas.style.height = `${canvas.drawingHeight}px`;
+  resizeCanvas() {
+    let canvas = this.ctx.canvas;
 
-  ctx.scale(resFactor, resFactor);
+    canvas.drawingWidth = window.innerWidth*0.7;
+    canvas.drawingHeight = window.innerHeight;
 
-}
+    canvas.width = canvas.drawingWidth*this.SSAA;
+    canvas.height = canvas.drawingHeight*this.SSAA;
 
-export function setupCanvas(resFactor, context){
+    canvas.style.width = `${canvas.drawingWidth}px`; 
+    canvas.style.height = `${canvas.drawingHeight}px`;
 
-  let canvas = document.createElement("canvas");
-  document.body.prepend(canvas);
-  let ctx = canvas.getContext(context);
+    this.ctx.scale(this.SSAA, this.SSAA);
 
-  resizeCanvas(ctx, resFactor);
+  }
 
-  return ctx
-  
-}
+  drawPhoneme(x,y,stress) {
+    let ctx = this.ctx
 
-function drawPhoneme(ctx, x,y,stress) {
+    this.ctx.beginPath();
+    ctx.arc(x,y,stress,0,2*Math.PI);
+    ctx.stroke();
+    ctx.closePath();
 
-  ctx.beginPath();
-  ctx.arc(x,y,stress,0,2*Math.PI);
-  ctx.stroke();
-  ctx.closePath();
+  }
 
-}
+  renderGraph(){
+    let ctx = this.ctx
+    let canvas = this.ctx.canvas
 
-export function renderGraph(ctx){
-  
-  let canvas = ctx.canvas
-  drawPhoneme(ctx, canvas.drawingWidth/2,canvas.drawingHeight/2,50);
+    this.drawPhoneme(canvas.drawingWidth/2,canvas.drawingHeight/2,50)    
+
+
+  }
 
 }
