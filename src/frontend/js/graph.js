@@ -124,24 +124,30 @@ export class RhymeGraph {
 
     const ctx = this.ctx;
     const canvas = this.ctx.canvas;
+    ctx.save();
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.translate(this.offsetX, this.offsetY)
+    ctx.scale(this.scale,this.scale);
 
     for (const word of this.words){
 
       for (const phone of word.phones){
-        this.drawPhoneme(phone.x +this.offsetX,phone.y+this.offsetY, phone.primaryStress ? 15 : phone.secondaryStress ? 10 : 5);
+        this.drawPhoneme(phone.x,phone.y, phone.primaryStress ? 15 : phone.secondaryStress ? 10 : 5);
       }
     }
+    ctx.restore();
   }
 
   initMouse(){
+    const canvas = this.ctx.canvas;
 
     this.dragging = false;
     this.lastX = 0;
     this.lastY = 0;
     this.offsetX = 0;
     this.offsetY = 0;
-    const canvas = this.ctx.canvas;
+    this.scale = 1
     
     canvas.addEventListener("mousedown", (e) => {
       this.dragging = true;
@@ -172,6 +178,25 @@ export class RhymeGraph {
       this.dragging = false;
     });
 
+    canvas.addEventListener("wheel", (e) => {
+      e.preventDefault();
+
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      const worldX = (mouseX - this.offsetX) / this.scale;
+      const worldY = (mouseY - this.offsetY) / this.scale;
+
+      const zoom = e.deltaY < 0 ? 1.1 : 0.9;
+
+      this.scale *= zoom;
+
+      this.offsetX = mouseX - worldX * this.scale;
+      this.offsetY = mouseY - worldY * this.scale;
+
+      this.renderGraph();
+    });
 
   }
 }
