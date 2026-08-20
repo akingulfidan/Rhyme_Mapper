@@ -7,9 +7,11 @@ export class RhymeGraph {
     const ctx = canvas.getContext(context);
     this.SSAA = SSAA;
     this.ctx = ctx;
+    this.graphState = "radial"; 
+    this.words = [];
 
-    this.resizeCanvas()
-
+    this.resizeCanvas();
+    this.initMouse();
   }
 
   resizeCanvas() {
@@ -28,6 +30,51 @@ export class RhymeGraph {
 
   }
 
+  updatePositions(){
+
+    const canvas = this.ctx.canvas  
+    const line_count = Math.max(...this.words.map(word => word.line));
+    let line_size_lookup = {}
+
+    for (let i = 0; i <= line_count; i++) {
+      line_size_lookup[i] = 0
+    }
+
+    if (this.graphState == 'radial'){
+      
+      const radius_shift = 15;
+      const initial_radius = line_count * radius_shift + 90;
+
+      for (const word of this.words){
+
+        const line = word.line;
+        const angle_shift = Math.PI/24*(25/line+Number.EPSILON);
+
+        for (const phone of word.phones){
+          let radius = initial_radius - line*radius_shift;
+          let angle = line_size_lookup[line]*angle_shift;
+
+          let x = radius*Math.cos(angle);
+          let y = radius*Math.sin(angle);
+
+          phone.assignPosition(x+canvas.drawingWidth/2, y+canvas.drawingHeight/2);
+
+          line_size_lookup[line] += 1;
+        }
+      }
+    }
+
+    if (this.graphState == 'linear'){
+
+
+    }
+  }
+
+  graphMode(mode){
+    this.graphState = mode;
+    this,this.updatePositions();
+  }
+
   inputData(lexicon, word_array, position_map, rhyme_paths){
     this.rhyme_paths = rhyme_paths;
     this.words = [];
@@ -42,24 +89,24 @@ export class RhymeGraph {
         phone_array.push(phone);
       }
       
-      let stress_to_end = []
+      let stress_to_end = [];
 
-      let stressIndex = phone_array.findLastIndex(phone => phone.primaryStress == true)
+      let stressIndex = phone_array.findLastIndex(phone => phone.primaryStress == true);
 
       if (stressIndex == -1){
-         stressIndex = phone_array.findLastIndex(phone => phone.secondaryStress == true)
+         stressIndex = phone_array.findLastIndex(phone => phone.secondaryStress == true);
       }
 
       if (stressIndex != -1){
-        stress_to_end = phone_array.slice(stressIndex)
+        stress_to_end = phone_array.slice(stressIndex);
       }
 
       let position = position_map[index];
       let word_obj = new Word(word, position[0], position[1], phone_array, stress_to_end);
-      this.words.push(word_obj)
+      this.words.push(word_obj);
       index++;
     }
-    console.log(this.words)
+    this.updatePositions();
 
   }
 
@@ -74,16 +121,60 @@ export class RhymeGraph {
   }
 
   renderGraph(){
+
     const ctx = this.ctx;
     const canvas = this.ctx.canvas;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    this.drawPhoneme(canvas.drawingWidth/2,canvas.drawingHeight/2,50);    
+    for (const word of this.words){
+
+      for (const phone of word.phones){
+        this.drawPhoneme(phone.x +this.offsetX,phone.y+this.offsetY, phone.primaryStress ? 15 : phone.secondaryStress ? 10 : 5);
+      }
+    }
+  }
+
+  initMouse(){
+
+    this.dragging = false;
+    this.lastX = 0;
+    this.lastY = 0;
+    this.offsetX = 0;
+    this.offsetY = 0;
+    const canvas = this.ctx.canvas;
+    
+    canvas.addEventListener("mousedown", (e) => {
+      this.dragging = true;
+      this.lastX = e.clientX;
+      this.lastY = e.clientY;
+    });
+
+    canvas.addEventListener("mousemove", (e) => {
+      if (this.dragging) {
+        const dx = e.clientX - this.lastX;
+        const dy = e.clientY - this.lastY;
+
+        this.offsetX += dx;
+        this.offsetY += dy;
+
+        this.lastX = e.clientX;
+        this.lastY = e.clientY;
+
+        this.renderGraph();
+      }
+    });
+
+    canvas.addEventListener("mouseup", () => {
+      this.dragging = false;
+    });
+
+    canvas.addEventListener("mouseleave", () => {
+      this.dragging = false;
+    });
 
 
   }
-
 }
-
 
 class Phone {
   constructor(sound) {

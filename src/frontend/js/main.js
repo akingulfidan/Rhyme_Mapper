@@ -6,8 +6,6 @@ const rhymeGraph = new RhymeGraph(2);
 
 window.addEventListener('resize',() => {rhymeGraph.resizeCanvas(), rhymeGraph.renderGraph()});
 
-rhymeGraph.renderGraph();
-
 // Language list dropdown
 
 let lang_response = await fetch("http://localhost:8000/lang");
@@ -47,5 +45,6 @@ genButton.addEventListener('click', async () => {
     
     let result = await response.json();
     rhymeGraph.inputData(result['lexicon'],result['word_array'],result['pos_map'],result['paths']);
+    rhymeGraph.renderGraph();
 });
 
