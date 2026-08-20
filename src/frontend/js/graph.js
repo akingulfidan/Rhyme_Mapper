@@ -5,8 +5,8 @@ export class RhymeGraph {
     let canvas = document.createElement("canvas");
     document.body.prepend(canvas);
     let ctx = canvas.getContext(context);
-    this.SSAA = SSAA
-    this.ctx = ctx
+    this.SSAA = SSAA;
+    this.ctx = ctx;
 
     this.resizeCanvas()
 
@@ -29,7 +29,7 @@ export class RhymeGraph {
   }
 
   drawPhoneme(x,y,stress) {
-    let ctx = this.ctx
+    let ctx = this.ctx;
 
     this.ctx.beginPath();
     ctx.arc(x,y,stress,0,2*Math.PI);
@@ -39,12 +39,48 @@ export class RhymeGraph {
   }
 
   renderGraph(){
-    let ctx = this.ctx
-    let canvas = this.ctx.canvas
+    let ctx = this.ctx;
+    let canvas = this.ctx.canvas;
 
-    this.drawPhoneme(canvas.drawingWidth/2,canvas.drawingHeight/2,50)    
+    this.drawPhoneme(canvas.drawingWidth/2,canvas.drawingHeight/2,50);    
 
 
+  }
+
+}
+
+
+class Phone {
+  constructor(sound) {
+    this.sound = sound;
+
+    if (sound.includes('ˈ')){
+      this.primaryStress = true;
+    }else{
+      this.primaryStress = false;
+    }
+
+    if (sound.includes('ˌ')){
+      this.secondaryStress = true;
+    }else{
+      this.secondaryStress = false;
+    }
+  }
+
+  assignPosition(x,y){
+    this.x = x;
+    this.y = y;
+  }
+
+}
+
+class Word {
+  constructor(text, line, position, phones, stress_to_end){
+    this.text = text;
+    this.line = line;
+    this.pos = pos;
+    this.phones = phones;
+    this.stress_to_end = stress_to_end    
   }
 
 }
