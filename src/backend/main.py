@@ -34,8 +34,7 @@ async def generate_phoneme_graph(user_input: userInput):
         "pos_map": pos_map,
         "paths":paths
     }
-    json_string = json.dumps(data)
-    return json_string
+    return data
     
 
 app.frontend("/", directory=FRONTEND_DIR, fallback="index.html")
