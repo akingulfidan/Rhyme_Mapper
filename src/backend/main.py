@@ -26,12 +26,11 @@ async def get_supported_langs():
 @app.post("/generate")
 async def generate_phoneme_graph(user_input: userInput):
     backend = init_backend(user_input.selected_lang)
-    lexicon, word_array, pos_map = phonemize_text(user_input.input_text,backend, separator)
+    lexicon, word_array = phonemize_text(user_input.input_text,backend, separator)
     paths = generate_rhyme_paths(lexicon,word_array)
     data = {
         "lexicon": lexicon,
         "word_array": word_array,
-        "pos_map": pos_map,
         "paths":paths
     }
     return data

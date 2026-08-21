@@ -15,8 +15,7 @@ def generate_word_occurance_array(text):
     for line in text.splitlines():
         line = Punctuation(';:,.!"?()-—/').remove(line)
         line = [word.lower() for word in line.split()]
-        if line:
-            lines.append(line)
+        lines.append(line)
 
     return lines
 
@@ -43,14 +42,13 @@ def text_position_map(word_array):
 
 def phonemize_text(text, backend, separator):
 
-    word_array_2d = generate_word_occurance_array(text)
-    position_map = text_position_map(word_array_2d)
-    word_array = [word for line in word_array_2d for word in line]
-    words = set(word_array)
+    word_array = generate_word_occurance_array(text)
+    word_array_flat = [word for line in word_array for word in line]
+    words = set(word_array_flat)
     
     lexicon = {word: phonemizeWord(word, backend, separator) for word in words}
 
-    return lexicon, word_array, position_map
+    return lexicon, word_array
 
 def stress_to_end(phones):
     for phone in reversed(phones):
@@ -100,6 +98,7 @@ def remove_contained_lists(lists):
     return result
 
 def generate_rhyme_paths(lexicon, word_array):
+    word_array = [word for line in word_array for word in line]
     rhyme_paths = []
 
     for index in range(len(word_array)):

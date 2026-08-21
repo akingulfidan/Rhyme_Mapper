@@ -1,13 +1,13 @@
 export class RhymeGraph {
 
-  constructor(SSAA, context = "2d"){ // SSAA -> Super Sampling Anti-Aliasing
+  constructor(SSAA, context = "2d") { // SSAA -> Super Sampling Anti-Aliasing
 
     const canvas = document.createElement("canvas");
     document.body.prepend(canvas);
     const ctx = canvas.getContext(context);
     this.SSAA = SSAA;
     this.ctx = ctx;
-    this.graphState = "radial"; 
+    this.graphState = "radial";
     this.words = [];
 
     this.resizeCanvas();
@@ -17,129 +17,147 @@ export class RhymeGraph {
   resizeCanvas() {
     const canvas = this.ctx.canvas;
 
-    canvas.drawingWidth = window.innerWidth*0.7;
+    canvas.drawingWidth = window.innerWidth * 0.7;
     canvas.drawingHeight = window.innerHeight;
 
-    canvas.width = canvas.drawingWidth*this.SSAA;
-    canvas.height = canvas.drawingHeight*this.SSAA;
+    canvas.width = canvas.drawingWidth * this.SSAA;
+    canvas.height = canvas.drawingHeight * this.SSAA;
 
-    canvas.style.width = `${canvas.drawingWidth}px`; 
+    canvas.style.width = `${canvas.drawingWidth}px`;
     canvas.style.height = `${canvas.drawingHeight}px`;
 
     this.ctx.scale(this.SSAA, this.SSAA);
 
   }
 
-  updatePositions(){
+  updatePositions() {
 
-    const canvas = this.ctx.canvas  
-    const line_count = Math.max(...this.words.map(word => word.line));
-    let line_size_lookup = {}
+    if (this.graphState == 'radial') {
 
-    for (let i = 0; i <= line_count; i++) {
-      line_size_lookup[i] = 0
-    }
+      const max_line_length = Math.max(...this.words.map(line => {
+        let total_phones = 0;
+        for (const word of line) {
+          total_phones += word.phones.length;
+        }
+        return total_phones;
+      }));
 
-    if (this.graphState == 'radial'){
-      
-      const radius_shift = 15;
-      const initial_radius = line_count * radius_shift + 90;
+      const total_line_count = this.words.length;
 
-      for (const word of this.words){
+      const radius_shift = 30;
+      const phone_spacing = 0.2;
+      const initial_radius = 5 * max_line_length + total_line_count * radius_shift + 10;
 
-        const line = word.line;
-        const angle_shift = Math.PI/24*(25/line+Number.EPSILON);
+      for (const [lineIndex, line] of this.words.entries()) {
+        let phone_count = 0;
 
-        for (const phone of word.phones){
-          let radius = initial_radius - line*radius_shift;
-          let angle = line_size_lookup[line]*angle_shift;
+        for (const [wordIndex, word] of line.entries()) {
 
-          let x = radius*Math.cos(angle);
-          let y = radius*Math.sin(angle);
+          const radius = initial_radius - lineIndex * radius_shift;
+          const angle_shift = Math.PI / (radius * phone_spacing);
+          const word_shift = wordIndex * 2 * angle_shift;
 
-          phone.assignPosition(x+canvas.drawingWidth/2, y+canvas.drawingHeight/2);
+          for (const phone of word.phones) {
+            let angle = phone_count * angle_shift - Math.PI / 2 + word_shift;
 
-          line_size_lookup[line] += 1;
+            let x = radius * Math.cos(angle);
+            let y = radius * Math.sin(angle);
+
+            phone.assignPosition(x, y);
+
+            phone_count++;
+          }
         }
       }
     }
 
-    if (this.graphState == 'linear'){
+    if (this.graphState == 'linear') {
 
 
     }
   }
 
-  graphMode(mode){
+  graphMode(mode) {
     this.graphState = mode;
-    this,this.updatePositions();
+    this.updatePositions();
   }
 
-  inputData(lexicon, word_array, position_map, rhyme_paths){
+  inputData(lexicon, word_array, rhyme_paths) {
     this.rhyme_paths = rhyme_paths;
     this.words = [];
 
-    let index = 0;
-    for (const word of word_array){
-      const phones = lexicon[word];
+    for (const line of word_array) {
+      let line_object_array = [];
 
-      let phone_array = [];
-      for (const sound of phones){
-        let phone = new Phone(sound);
-        phone_array.push(phone);
+      for (const word of line) {
+        const phones = lexicon[word];
+
+
+        let phone_array = [];
+        for (const sound of phones) {
+          let phone = new Phone(sound);
+          phone_array.push(phone);
+        }
+
+        let stress_to_end = [];
+
+        let stressIndex = phone_array.findLastIndex(phone => phone.primaryStress == true);
+
+        if (stressIndex == -1) {
+          stressIndex = phone_array.findLastIndex(phone => phone.secondaryStress == true);
+        }
+
+        if (stressIndex != -1) {
+          stress_to_end = phone_array.slice(stressIndex);
+        }
+        let word_obj = new Word(word, phone_array, stress_to_end);
+        line_object_array.push(word_obj);
+
       }
-      
-      let stress_to_end = [];
+      this.words.push(line_object_array)
 
-      let stressIndex = phone_array.findLastIndex(phone => phone.primaryStress == true);
-
-      if (stressIndex == -1){
-         stressIndex = phone_array.findLastIndex(phone => phone.secondaryStress == true);
-      }
-
-      if (stressIndex != -1){
-        stress_to_end = phone_array.slice(stressIndex);
-      }
-
-      let position = position_map[index];
-      let word_obj = new Word(word, position[0], position[1], phone_array, stress_to_end);
-      this.words.push(word_obj);
-      index++;
     }
+
     this.updatePositions();
 
   }
 
-  drawPhoneme(x,y,stress) {
+  drawPhoneme(x, y, stress) {
     const ctx = this.ctx;
 
     this.ctx.beginPath();
-    ctx.arc(x,y,stress,0,2*Math.PI);
+    ctx.arc(x, y, stress, 0, 2 * Math.PI);
     ctx.stroke();
     ctx.closePath();
 
   }
 
-  renderGraph(){
+  renderGraph() {
 
     const ctx = this.ctx;
     const canvas = this.ctx.canvas;
     ctx.save();
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.drawingWidth, canvas.drawingHeight);
     ctx.translate(this.offsetX, this.offsetY)
-    ctx.scale(this.scale,this.scale);
+    ctx.scale(this.scale, this.scale);
 
-    for (const word of this.words){
+    ctx.translate(canvas.drawingWidth / 2, canvas.drawingHeight / 2)
 
-      for (const phone of word.phones){
-        this.drawPhoneme(phone.x,phone.y, phone.primaryStress ? 15 : phone.secondaryStress ? 10 : 5);
+
+    for (const line of this.words) {
+
+      for (const word of line) {
+        for (const phone of word.phones) {
+          this.drawPhoneme(phone.x, phone.y, phone.primaryStress ? 9 : phone.secondaryStress ? 7 : 4);
+        }
       }
     }
+
     ctx.restore();
   }
 
-  initMouse(){
+  initMouse() {
     const canvas = this.ctx.canvas;
 
     this.dragging = false;
@@ -148,7 +166,7 @@ export class RhymeGraph {
     this.offsetX = 0;
     this.offsetY = 0;
     this.scale = 1
-    
+
     canvas.addEventListener("mousedown", (e) => {
       this.dragging = true;
       this.lastX = e.clientX;
@@ -182,6 +200,7 @@ export class RhymeGraph {
       e.preventDefault();
 
       const rect = canvas.getBoundingClientRect();
+
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
 
@@ -205,20 +224,20 @@ class Phone {
   constructor(sound) {
     this.sound = sound;
 
-    if (sound.includes('ˈ')){
+    if (sound.includes('ˈ')) {
       this.primaryStress = true;
-    }else{
+    } else {
       this.primaryStress = false;
     }
 
-    if (sound.includes('ˌ')){
+    if (sound.includes('ˌ')) {
       this.secondaryStress = true;
-    }else{
+    } else {
       this.secondaryStress = false;
     }
   }
 
-  assignPosition(x,y){
+  assignPosition(x, y) {
     this.x = x;
     this.y = y;
   }
@@ -226,12 +245,10 @@ class Phone {
 }
 
 class Word {
-  constructor(text, line, position, phones, stress_to_end){
+  constructor(text, phones, stress_to_end) {
     this.text = text;
-    this.line = line;
-    this.pos = position;
     this.phones = phones;
-    this.stress_to_end = stress_to_end;    
+    this.stress_to_end = stress_to_end;
   }
 
 }

@@ -42,9 +42,8 @@ genButton.addEventListener('click', async () => {
 
         }
     );
-    
     let result = await response.json();
-    rhymeGraph.inputData(result['lexicon'],result['word_array'],result['pos_map'],result['paths']);
+    rhymeGraph.inputData(result['lexicon'],result['word_array'],result['paths']);
     rhymeGraph.renderGraph();
 });
 
