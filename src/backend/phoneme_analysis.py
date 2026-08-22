@@ -40,15 +40,14 @@ def text_position_map(word_array):
 
     return text_poisiton_map
 
-def phonemize_text(text, backend, separator):
+def phonemize_text(word_array, backend, separator):
 
-    word_array = generate_word_occurance_array(text)
     word_array_flat = [word for line in word_array for word in line]
     words = set(word_array_flat)
     
     lexicon = {word: phonemizeWord(word, backend, separator) for word in words}
 
-    return lexicon, word_array
+    return lexicon
 
 def stress_to_end(phones):
     for phone in reversed(phones):

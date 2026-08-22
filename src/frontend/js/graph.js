@@ -44,7 +44,7 @@ export class RhymeGraph {
 
       const total_line_count = this.words.length;
 
-      const radius_shift = 30;
+      const radius_shift = 25;
       const phone_spacing = 0.2;
       const initial_radius = 5 * max_line_length + total_line_count * radius_shift + 10;
 
@@ -142,16 +142,87 @@ export class RhymeGraph {
   }
 
   drawRhymePath(path){
+
+    const ctx = this.ctx;
+
+    let endpoints = [];
+
     for (const target of path){
+
       const [line, position] = target;
       const word = this.words[line][position];
       const stress_to_end = word.stress_to_end;
 
-      const rhymePos = this.calculateRhymePosition(stress_to_end);
+      const [endpointX, endpointY] = this.calculateRhymePosition(stress_to_end);
+      const endpoint_radius = stress_to_end.length*9;
 
-      this.drawCircle(rhymePos[0], rhymePos[1], stress_to_end.length*13);
+      endpoints.push([endpointX,endpointY, endpoint_radius]);
+
+      this.drawCircle(endpointX, endpointY, endpoint_radius);      
     }
+    let alpha1;
+    let alpha2;
+    if (path[0][0] == path[1][0]){
 
+      alpha1 = 0;
+      alpha2 = Math.PI;
+
+    } else {
+      if (path[0][1] < path[1][1]){
+
+        alpha1 = 0;
+        alpha2 = Math.PI/2;
+
+      }
+      if(path[0][1] > path[1][1]){
+        alpha1 = Math.PI;
+        alpha2 = Math.PI/2;
+      }
+
+      if(path[0][1] == path[1][1]){
+        alpha1 = 0;
+        alpha2 = 0;  
+        
+      }
+
+    }
+    const cp1 = {
+      x : (endpoints[0][2]*Math.cos(alpha1))+endpoints[0][0],
+      y : (endpoints[0][2]*Math.sin(alpha1))+endpoints[0][1]
+    };
+
+    const cp3 = {
+      x : (endpoints[1][2]*Math.cos(alpha2))+endpoints[1][0],
+      y : (endpoints[1][2]*Math.sin(alpha2))+endpoints[1][1]
+    };
+
+
+    const dx = cp1.x - cp3.x;
+    const dy = cp1.y - cp3.y;
+
+    const perpendicular = {
+      x : -dy /Math.hypot(dx,dy),
+      y : dx /Math.hypot(dx,dy)
+    };
+
+    const mid = {
+      x : (cp1.x + cp3.x)/2,
+      y : (cp1.y + cp3.y)/2,
+    };
+    
+    const amplitude = 20;
+
+    const cp2 = {
+      x : mid.x + amplitude*perpendicular.x,
+      y : mid.y + amplitude*perpendicular.y
+    };
+
+    
+    ctx.beginPath();
+    ctx.moveTo(cp1.x, cp1.y);
+    ctx.quadraticCurveTo(cp2.x,cp2.y,cp3.x,cp3.y);
+    ctx.stroke();
+    ctx.closePath();
   }
   
 
@@ -173,7 +244,7 @@ export class RhymeGraph {
 
       for (const word of line) {
         for (const phone of word.phones) {
-          this.drawCircle(phone.x, phone.y, phone.primaryStress ? 9 : phone.secondaryStress ? 7 : 4);
+          this.drawCircle(phone.x, phone.y, phone.primaryStress ? 7 : phone.secondaryStress ? 5 : 3);
         }
       }
     }

@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from pathlib import Path
 import json 
 
-from phoneme_analysis import get_available_languages, init_backend, phonemize_text, generate_rhyme_paths
+from phoneme_analysis import get_available_languages, init_backend, generate_word_occurance_array, phonemize_text, generate_rhyme_paths
 from phonemizer.separator import Separator
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -25,9 +25,12 @@ async def get_supported_langs():
 
 @app.post("/generate")
 async def generate_phoneme_graph(user_input: userInput):
+
     backend = init_backend(user_input.selected_lang)
-    lexicon, word_array = phonemize_text(user_input.input_text,backend, separator)
+    word_array = generate_word_occurance_array(user_input.input_text)
+    lexicon = phonemize_text(word_array, backend, separator)
     paths = generate_rhyme_paths(lexicon,word_array)
+    
     data = {
         "lexicon": lexicon,
         "word_array": word_array,
