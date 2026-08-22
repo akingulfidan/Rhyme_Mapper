@@ -13,7 +13,7 @@ def generate_word_occurance_array(text):
 
     lines = []
     for line in text.splitlines():
-        line = Punctuation(';:,.!"?()-—/').remove(line)
+        line = Punctuation(';:,.!"”?()-—/').remove(line)
         line = [word.lower() for word in line.split()]
         lines.append(line)
 
@@ -79,8 +79,7 @@ def find_rhyme(start_index, word_array, lexicon, window_length, path_array):
             path_array.append(start_index+shift)
             return find_rhyme(start_index+shift, word_array,lexicon, window_length, path_array)
 
-    return path_array
-        
+    return path_array        
 
 def remove_contained_lists(lists):
     sorted_lists = sorted(lists, key=len, reverse=True)
@@ -97,17 +96,33 @@ def remove_contained_lists(lists):
 
     return result
 
+def flat_to_2d_array(flat_index, array_2d):
+    for row_index, row in enumerate(array_2d):
+        if flat_index < len(row):
+            return row_index, flat_index
+
+        flat_index -= len(row)
+
 def generate_rhyme_paths(lexicon, word_array):
-    word_array = [word for line in word_array for word in line]
+    word_array_flat = [word for line in word_array for word in line]
     rhyme_paths = []
 
-    for index in range(len(word_array)):
-        rhyme_path = find_rhyme(index,word_array,lexicon,10,[])
+    for index in range(len(word_array_flat)):
+        rhyme_path = find_rhyme(index,word_array_flat,lexicon,10,[])
         if rhyme_path:
             rhyme_path.insert(0,index)
             rhyme_paths.append(rhyme_path)
     cleaned = remove_contained_lists(rhyme_paths)
-    return cleaned
+
+    map_2d = []
+    for path in cleaned:
+        new_path = []
+        for index in path:
+            index_2d = flat_to_2d_array(index, word_array)
+            new_path.append(index_2d)
+        map_2d.append(new_path)
+
+    return map_2d
 
 
  

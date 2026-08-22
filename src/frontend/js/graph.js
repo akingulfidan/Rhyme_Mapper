@@ -122,15 +122,38 @@ export class RhymeGraph {
 
   }
 
-  drawPhoneme(x, y, stress) {
+  drawCircle(x, y, radius) {
     const ctx = this.ctx;
 
-    this.ctx.beginPath();
-    ctx.arc(x, y, stress, 0, 2 * Math.PI);
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, 2 * Math.PI);
     ctx.stroke();
     ctx.closePath();
 
   }
+
+  calculateRhymePosition(phones){
+
+    const avgX = phones.reduce((sum,phone) => sum + phone.x, 0) / phones.length;
+    const avgY = phones.reduce((sum,phone) => sum + phone.y, 0) / phones.length;
+
+    return [avgX,avgY];
+
+  }
+
+  drawRhymePath(path){
+    for (const target of path){
+      const [line, position] = target;
+      const word = this.words[line][position];
+      const stress_to_end = word.stress_to_end;
+
+      const rhymePos = this.calculateRhymePosition(stress_to_end);
+
+      this.drawCircle(rhymePos[0], rhymePos[1], stress_to_end.length*13);
+    }
+
+  }
+  
 
   renderGraph() {
 
@@ -144,14 +167,22 @@ export class RhymeGraph {
 
     ctx.translate(canvas.drawingWidth / 2, canvas.drawingHeight / 2)
 
-
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgb(0, 0, 0)';
     for (const line of this.words) {
 
       for (const word of line) {
         for (const phone of word.phones) {
-          this.drawPhoneme(phone.x, phone.y, phone.primaryStress ? 9 : phone.secondaryStress ? 7 : 4);
+          this.drawCircle(phone.x, phone.y, phone.primaryStress ? 9 : phone.secondaryStress ? 7 : 4);
         }
       }
+    }
+
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgb(177, 39, 39)';
+
+    for (const path of this.rhyme_paths){
+      this.drawRhymePath(path);
     }
 
     ctx.restore();
