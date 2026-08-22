@@ -9,6 +9,7 @@ export class RhymeGraph {
     this.ctx = ctx;
     this.graphState = "radial";
     this.words = [];
+    this.background_color ="rgb(255, 255, 255)"
 
     this.resizeCanvas();
     this.initMouse();
@@ -44,7 +45,7 @@ export class RhymeGraph {
 
       const total_line_count = this.words.length;
 
-      const radius_shift = 25;
+      const radius_shift = 50;
       const phone_spacing = 0.2;
       const initial_radius = 5 * max_line_length + total_line_count * radius_shift + 10;
 
@@ -122,12 +123,16 @@ export class RhymeGraph {
 
   }
 
-  drawCircle(x, y, radius) {
+  drawCircle(x, y, radius, fill) {
     const ctx = this.ctx;
 
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, 2 * Math.PI);
+    if (fill){
+      ctx.fill();
+    }
     ctx.stroke();
+
     ctx.closePath();
 
   }
@@ -140,10 +145,38 @@ export class RhymeGraph {
     return [avgX,avgY];
 
   }
-
-  drawRhymePath(path){
+  drawQuadtraticCurve(startX,startY, endX, endY){
 
     const ctx = this.ctx;
+    const amplitude = 50;
+
+    const dx = startX - endX
+    const dy = startY- endY;
+
+    const perpendicular = {
+      x : -dy /Math.hypot(dx,dy),
+      y : dx /Math.hypot(dx,dy)
+    };
+
+    const mid = {
+      x : (startX + endX)/2,
+      y : (startY + endY)/2,
+    };
+
+    const control_point = {
+      x : mid.x + amplitude*perpendicular.x,
+      y : mid.y + amplitude*perpendicular.y
+    };
+
+    
+    ctx.beginPath();
+    ctx.moveTo(startX,startY);
+    ctx.quadraticCurveTo(control_point.x,control_point.y,endX,endY);
+    ctx.stroke();
+    ctx.closePath();
+
+  }
+  drawRhymePath(path){
 
     let endpoints = [];
 
@@ -156,73 +189,22 @@ export class RhymeGraph {
       const [endpointX, endpointY] = this.calculateRhymePosition(stress_to_end);
       const endpoint_radius = stress_to_end.length*9;
 
-      endpoints.push([endpointX,endpointY, endpoint_radius]);
-
-      this.drawCircle(endpointX, endpointY, endpoint_radius);      
-    }
-    let alpha1;
-    let alpha2;
-    if (path[0][0] == path[1][0]){
-
-      alpha1 = 0;
-      alpha2 = Math.PI;
-
-    } else {
-      if (path[0][1] < path[1][1]){
-
-        alpha1 = 0;
-        alpha2 = Math.PI/2;
-
-      }
-      if(path[0][1] > path[1][1]){
-        alpha1 = Math.PI;
-        alpha2 = Math.PI/2;
-      }
-
-      if(path[0][1] == path[1][1]){
-        alpha1 = 0;
-        alpha2 = 0;  
-        
-      }
+      endpoints.push({x : endpointX,y : endpointY, r : endpoint_radius});
 
     }
-    const cp1 = {
-      x : (endpoints[0][2]*Math.cos(alpha1))+endpoints[0][0],
-      y : (endpoints[0][2]*Math.sin(alpha1))+endpoints[0][1]
-    };
 
-    const cp3 = {
-      x : (endpoints[1][2]*Math.cos(alpha2))+endpoints[1][0],
-      y : (endpoints[1][2]*Math.sin(alpha2))+endpoints[1][1]
-    };
+    for (const [index, endpoint] of endpoints.entries()){
 
+      if (index < endpoints.length - 1){
+        const next_point = endpoints[index + 1];
 
-    const dx = cp1.x - cp3.x;
-    const dy = cp1.y - cp3.y;
+        this.drawQuadtraticCurve(endpoint.x,endpoint.y, next_point.x,next_point.y);
+      }
+      this.drawCircle(endpoint.x, endpoint.y, endpoint.r, true);
 
-    const perpendicular = {
-      x : -dy /Math.hypot(dx,dy),
-      y : dx /Math.hypot(dx,dy)
-    };
+      
+    }
 
-    const mid = {
-      x : (cp1.x + cp3.x)/2,
-      y : (cp1.y + cp3.y)/2,
-    };
-    
-    const amplitude = 20;
-
-    const cp2 = {
-      x : mid.x + amplitude*perpendicular.x,
-      y : mid.y + amplitude*perpendicular.y
-    };
-
-    
-    ctx.beginPath();
-    ctx.moveTo(cp1.x, cp1.y);
-    ctx.quadraticCurveTo(cp2.x,cp2.y,cp3.x,cp3.y);
-    ctx.stroke();
-    ctx.closePath();
   }
   
 
@@ -230,13 +212,24 @@ export class RhymeGraph {
 
     const ctx = this.ctx;
     const canvas = this.ctx.canvas;
-    ctx.save();
 
-    ctx.clearRect(0, 0, canvas.drawingWidth, canvas.drawingHeight);
+    ctx.save();
+    ctx.fillStyle = this.background_color;
+    ctx.fillRect(0, 0, canvas.drawingWidth, canvas.drawingHeight);
+
     ctx.translate(this.offsetX, this.offsetY)
     ctx.scale(this.scale, this.scale);
 
     ctx.translate(canvas.drawingWidth / 2, canvas.drawingHeight / 2)
+
+    ctx.lineWidth = 3;
+
+    for (const path of this.rhyme_paths){
+        
+      ctx.strokeStyle = `hsl(0, ${path.length*10}%, 47%)`;
+
+      this.drawRhymePath(path);
+    }
 
     ctx.lineWidth = 1;
     ctx.strokeStyle = 'rgb(0, 0, 0)';
@@ -247,13 +240,6 @@ export class RhymeGraph {
           this.drawCircle(phone.x, phone.y, phone.primaryStress ? 7 : phone.secondaryStress ? 5 : 3);
         }
       }
-    }
-
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = 'rgb(177, 39, 39)';
-
-    for (const path of this.rhyme_paths){
-      this.drawRhymePath(path);
     }
 
     ctx.restore();

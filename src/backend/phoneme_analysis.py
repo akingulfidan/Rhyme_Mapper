@@ -107,7 +107,7 @@ def generate_rhyme_paths(lexicon, word_array):
     rhyme_paths = []
 
     for index in range(len(word_array_flat)):
-        rhyme_path = find_rhyme(index,word_array_flat,lexicon,10,[])
+        rhyme_path = find_rhyme(index,word_array_flat,lexicon,25,[])
         if rhyme_path:
             rhyme_path.insert(0,index)
             rhyme_paths.append(rhyme_path)
