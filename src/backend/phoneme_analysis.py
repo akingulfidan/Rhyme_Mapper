@@ -61,9 +61,9 @@ def stress_to_end(phones):
 
 def check_rhyme(phones1, phones2):
     if stress_to_end(phones1) == stress_to_end(phones2):
-        return True
-    else:
-        return False
+        if stress_to_end(phones1):
+            return True
+    return False
 
 def find_rhyme(start_index, word_array, lexicon, window_length, path_array):
     

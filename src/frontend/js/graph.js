@@ -83,8 +83,12 @@ export class RhymeGraph {
     this.updatePositions();
   }
 
+  updatePaths(paths){
+    this.rhyme_paths = paths;
+  }
   inputData(lexicon, word_array, rhyme_paths) {
-    this.rhyme_paths = rhyme_paths;
+    this.all_rhyme_paths = rhyme_paths.reverse(); // The array comes sorted from longest to shortest from the backend it is cleaner to draw the shortes first
+    this.rhyme_paths = this.all_rhyme_paths;
     this.words = [];
 
     for (const line of word_array) {
@@ -148,10 +152,11 @@ export class RhymeGraph {
   drawQuadtraticCurve(startX,startY, endX, endY){
 
     const ctx = this.ctx;
-    const amplitude = 50;
 
     const dx = startX - endX
     const dy = startY- endY;
+
+    const amplitude = 50 + 0.5*Math.hypot(dx,dy);
 
     const perpendicular = {
       x : -dy /Math.hypot(dx,dy),
@@ -208,7 +213,7 @@ export class RhymeGraph {
   }
   
 
-  renderGraph() {
+  renderGraph(filter_value) {
 
     const ctx = this.ctx;
     const canvas = this.ctx.canvas;
@@ -225,8 +230,8 @@ export class RhymeGraph {
     ctx.lineWidth = 3;
 
     for (const path of this.rhyme_paths){
-        
-      ctx.strokeStyle = `hsl(0, ${path.length*10}%, 47%)`;
+
+      ctx.strokeStyle = `hsla(0, ${Math.min(path.length*10,100)}%, 47%, 0.6)`;
 
       this.drawRhymePath(path);
     }
