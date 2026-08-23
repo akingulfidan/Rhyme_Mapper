@@ -1,27 +1,63 @@
 # Rhyme Mapper
+
+Rhyme Mapper is a tool for visually exploring the phonetic structure and rhyme patterns of text, with a focus on poetry.
+
 ![screenshot](assets/readme_photo.png)
 
-Rhyme Mapper is a tool for visual exploration of phonetic structure of a text.
 
-Designed to primarily to work with poems
+The tool generates a phonetic representation of a poem where each phoneme is drawn as a circle. Phoneme size is used to indicate stress, with different sizes representing primary and secondary stress.
 
+Using phoneme sequences, the tool detects chains of rhyming words and represents the chains as paths connecting the drawn phonemes.
 
-## Installation and usage
+Rhyme Mapper supports [127 languages](https://github.com/espeak-ng/espeak-ng/blob/master/docs/languages.md) supported by espeak-ng.
 
-### Pip
-    [!NOTE]
-    PyPI package coming soon.
+The project is ongoing and still in its early stages.
+
+## Installation
+
+### PyPI
+
+> [!NOTE]
+> The PyPI package is not yet available.
 
 ### Docker
 
 ```sh
-docker pull rhyme-mapper
+# Pull the latest image
+docker pull akingulfidan/rhyme-mapper 
+
+# Start the container
+docker run -p 8000:8000 akingulfidan/rhyme-mapper:latest 
+
+# Navigate to http://localhost:8000/front
 ```
+## Usage
+1. Enter or paste your text.
+2. Select the language.
+3. Generate the rhyme graph.
+4. Use the chain-length slider to filter the displayed rhyme paths.
+5. Drag the graph to move it and scroll to zoom.
+
 ## Roadmap
+
+### Short Term :
+
+- [ ] Allow selecting phones in the visualization
+- [ ] Display information on selected words and phones
+- [ ] Line numbers on the text area and the visualization.
+- [ ] Better rhyme path filtering tools.
+- [ ] Improve documentation.
+- [ ] Publish package to PyPI.
+
+### Long Term:
+
+- [ ] Add detection for non-perfect rhymes.
+- [ ] Highlight stress patterns in the visualization and display measure.
+- [ ] Rhyme Scheme detection.
 
 ## Attributions
 
-Phonemization in Rhyme Mapper is done using [Phonemizer](https://github.com/bootphon/phonemizer?tabglp+lisence=GPL-3.0-1-ov-file&tab=readme-ov-file) library.
+Phonemization in Rhyme Mapper is done using [Phonemizer](https://github.com/bootphon/phonemizer) library.
 
 ```bibtex
 @article{Bernard2021,
@@ -37,3 +73,6 @@ title = {Phonemizer: Text to Phones Transcription for Multiple Languages in Pyth
 journal = {Journal of Open Source Software}
 }
 ```
+## License
+
+[GNU Affero General Public License v3.0](LICENSE)
