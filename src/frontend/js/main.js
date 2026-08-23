@@ -2,7 +2,7 @@ import { RhymeGraph } from "./graph.js";
 
 // Language list dropdown
 
-let lang_response = await fetch("http://localhost:8000/lang");
+let lang_response = await fetch("/lang");
 const languages = await lang_response.json()
 
 const lang_dropdown = document.getElementById("language");
@@ -44,7 +44,7 @@ const textInput = document.getElementById("textInput");
 const genButton = document.getElementById("GenerateButton");
 
 genButton.addEventListener('click', async () => {
-    let response = await fetch("http://localhost:8000/generate",
+    let response = await fetch("/generate",
         {
             method: "POST",
             headers: {

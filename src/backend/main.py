@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from pathlib import Path
@@ -39,4 +40,4 @@ async def generate_phoneme_graph(user_input: userInput):
     return data
     
 
-app.frontend("/", directory=FRONTEND_DIR, fallback="index.html")
+app.mount("/front", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
