@@ -7,10 +7,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends espeak-ng
 COPY pyproject.toml . 
 COPY uv.lock .
 
-RUN pip install uv
-RUN uv sync --frozen --no-dev
+RUN pip install --no-cache-dir uv
 
-copy . .
+COPY . .
+RUN uv build && pip install dist/*.whl 
+
 EXPOSE 8000
 
-CMD ["uv", "run", "fastapi", "run", "src/backend/main.py", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["rhyme-mapper"]

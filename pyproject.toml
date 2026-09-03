@@ -1,8 +1,41 @@
 [project]
 name = "rhyme-mapper"
+description = "Rhyme Mapper is a tool for visually exploring the phonetic structure and rhyme patterns of text."
+readme = "README.md"
+license = "AGPL-3.0-or-later"
+license-files = ["LICENSE"]
+keywords = [
+    "poetry",
+    "rhyme",
+    "phonology",
+    "text-analysis",
+    "computational-linguistics",
+    "nlp",
+    "visualization",
+    "rhyme-detection"
+]
+
 version = "0.0.1"
 requires-python = ">=3.14"
 dependencies = [
     "fastapi[standard]>=0.141.1",
     "phonemizer>=3.4.0",
 ]
+
+authors = [
+  {name = "Akin Gülfidan", email = "akingulfidan@gmail.com"}
+]
+maintainers = [
+  {name = "Akin Gülfidan", email = "akingulfidan@gmail.com"}
+]
+
+[project.urls]
+Repository = "https://github.com/akingulfidan/Rhyme_Mapper"
+DockerHub = "https://hub.docker.com/repository/docker/akingulfidan/rhyme-mapper/general"
+
+[project.scripts]
+rhyme-mapper = "rhyme_mapper.cli:main"
+
+[build-system]
+requires = ["uv_build >= 0.12.5, <0.13.0"]
+build-backend = "uv_build"
