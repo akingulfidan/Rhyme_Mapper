@@ -15,22 +15,26 @@ The project is ongoing and still in its early stages.
 
 ## Installation
 
-### PyPI
+### Pip
 
 > [!NOTE]
-> The PyPI package is not yet available.
+> Rhyme mapper requires espeak-ng to work. Installation guide can be found [here](https://github.com/espeak-ng/espeak-ng/blob/master/docs/guide.md#installation).
 
+```sh
+pip install rhyme-mapper
+```
+Launch Rhyme Mapper:
+```sh
+rhyme-mapper
+```
+Rhyme Mapper is accessible at http://localhost:8000
 ### Docker
 
 ```sh
-# Pull the latest image
-docker pull akingulfidan/rhyme-mapper 
-
 # Start the container
 docker run -p 8000:8000 akingulfidan/rhyme-mapper:latest 
-
-# Navigate to http://localhost:8000/front
 ```
+Rhyme Mapper is accessible at http://localhost:8000
 ## Usage
 1. Enter or paste your text.
 2. Select the language.
