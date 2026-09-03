@@ -51,7 +51,6 @@ Rhyme Mapper is accessible at http://localhost:8000
 - [ ] Line numbers on the text area and the visualization.
 - [ ] Better rhyme path filtering tools.
 - [ ] Improve documentation.
-- [ ] Publish package to PyPI.
 
 ### Long Term:
 
