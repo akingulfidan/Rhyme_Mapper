@@ -1,6 +1,6 @@
 export class RhymeGraph {
-
-  constructor(SSAA, context = "2d") { // SSAA -> Super Sampling Anti-Aliasing
+  constructor(SSAA, context = "2d") {
+    // SSAA -> Super Sampling Anti-Aliasing
 
     const canvas = document.createElement("canvas");
     document.body.prepend(canvas);
@@ -9,7 +9,7 @@ export class RhymeGraph {
     this.ctx = ctx;
     this.graphState = "radial";
     this.words = [];
-    this.background_color ="rgb(255, 255, 255)"
+    this.background_color = "rgb(255, 255, 255)";
 
     this.resizeCanvas();
     this.initMouse();
@@ -28,32 +28,31 @@ export class RhymeGraph {
     canvas.style.height = `${canvas.drawingHeight}px`;
 
     this.ctx.scale(this.SSAA, this.SSAA);
-
   }
 
   updatePositions() {
-
-    if (this.graphState == 'radial') {
-
-      const max_line_length = Math.max(...this.words.map(line => {
-        let total_phones = 0;
-        for (const word of line) {
-          total_phones += word.phones.length;
-        }
-        return total_phones;
-      }));
+    if (this.graphState == "radial") {
+      const max_line_length = Math.max(
+        ...this.words.map((line) => {
+          let total_phones = 0;
+          for (const word of line) {
+            total_phones += word.phones.length;
+          }
+          return total_phones;
+        }),
+      );
 
       const total_line_count = this.words.length;
 
       const radius_shift = 50;
       const phone_spacing = 0.2;
-      const initial_radius = 5 * max_line_length + total_line_count * radius_shift + 10;
+      const initial_radius =
+        5 * max_line_length + total_line_count * radius_shift + 10;
 
       for (const [lineIndex, line] of this.words.entries()) {
         let phone_count = 0;
 
         for (const [wordIndex, word] of line.entries()) {
-
           const radius = initial_radius - lineIndex * radius_shift;
           const angle_shift = Math.PI / (radius * phone_spacing);
           const word_shift = wordIndex * 2 * angle_shift;
@@ -72,9 +71,7 @@ export class RhymeGraph {
       }
     }
 
-    if (this.graphState == 'linear') {
-
-
+    if (this.graphState == "linear") {
     }
   }
 
@@ -83,9 +80,10 @@ export class RhymeGraph {
     this.updatePositions();
   }
 
-  updatePaths(paths){
+  updatePaths(paths) {
     this.rhyme_paths = paths;
   }
+
   inputData(lexicon, word_array, rhyme_paths) {
     this.all_rhyme_paths = rhyme_paths.reverse(); // The array comes sorted from longest to shortest from the backend it is cleaner to draw the shortes first
     this.rhyme_paths = this.all_rhyme_paths;
@@ -97,7 +95,6 @@ export class RhymeGraph {
       for (const word of line) {
         const phones = lexicon[word];
 
-
         let phone_array = [];
         for (const sound of phones) {
           let phone = new Phone(sound);
@@ -106,10 +103,14 @@ export class RhymeGraph {
 
         let stress_to_end = [];
 
-        let stressIndex = phone_array.findLastIndex(phone => phone.primaryStress == true);
+        let stressIndex = phone_array.findLastIndex(
+          (phone) => phone.primaryStress == true,
+        );
 
         if (stressIndex == -1) {
-          stressIndex = phone_array.findLastIndex(phone => phone.secondaryStress == true);
+          stressIndex = phone_array.findLastIndex(
+            (phone) => phone.secondaryStress == true,
+          );
         }
 
         if (stressIndex != -1) {
@@ -117,14 +118,11 @@ export class RhymeGraph {
         }
         let word_obj = new Word(word, phone_array, stress_to_end);
         line_object_array.push(word_obj);
-
       }
-      this.words.push(line_object_array)
-
+      this.words.push(line_object_array);
     }
 
     this.updatePositions();
-
   }
 
   drawCircle(x, y, radius, fill) {
@@ -132,89 +130,83 @@ export class RhymeGraph {
 
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, 2 * Math.PI);
-    if (fill){
+    if (fill) {
       ctx.fill();
     }
     ctx.stroke();
 
     ctx.closePath();
-
   }
 
-  calculateRhymePosition(phones){
+  calculateRhymePosition(phones) {
+    const avgX =
+      phones.reduce((sum, phone) => sum + phone.x, 0) / phones.length;
+    const avgY =
+      phones.reduce((sum, phone) => sum + phone.y, 0) / phones.length;
 
-    const avgX = phones.reduce((sum,phone) => sum + phone.x, 0) / phones.length;
-    const avgY = phones.reduce((sum,phone) => sum + phone.y, 0) / phones.length;
-
-    return [avgX,avgY];
-
+    return [avgX, avgY];
   }
-  drawQuadtraticCurve(startX,startY, endX, endY){
 
+  drawQuadtraticCurve(startX, startY, endX, endY) {
     const ctx = this.ctx;
 
-    const dx = startX - endX
-    const dy = startY- endY;
+    const dx = startX - endX;
+    const dy = startY - endY;
 
-    const amplitude = 50 + 0.5*Math.hypot(dx,dy);
+    const amplitude = 50 + 0.5 * Math.hypot(dx, dy);
 
     const perpendicular = {
-      x : -dy /Math.hypot(dx,dy),
-      y : dx /Math.hypot(dx,dy)
+      x: -dy / Math.hypot(dx, dy),
+      y: dx / Math.hypot(dx, dy),
     };
 
     const mid = {
-      x : (startX + endX)/2,
-      y : (startY + endY)/2,
+      x: (startX + endX) / 2,
+      y: (startY + endY) / 2,
     };
 
     const control_point = {
-      x : mid.x + amplitude*perpendicular.x,
-      y : mid.y + amplitude*perpendicular.y
+      x: mid.x + amplitude * perpendicular.x,
+      y: mid.y + amplitude * perpendicular.y,
     };
 
-    
     ctx.beginPath();
-    ctx.moveTo(startX,startY);
-    ctx.quadraticCurveTo(control_point.x,control_point.y,endX,endY);
+    ctx.moveTo(startX, startY);
+    ctx.quadraticCurveTo(control_point.x, control_point.y, endX, endY);
     ctx.stroke();
     ctx.closePath();
-
   }
-  drawRhymePath(path){
 
+  drawRhymePath(path) {
     let endpoints = [];
 
-    for (const target of path){
-
+    for (const target of path) {
       const [line, position] = target;
       const word = this.words[line][position];
       const stress_to_end = word.stress_to_end;
 
       const [endpointX, endpointY] = this.calculateRhymePosition(stress_to_end);
-      const endpoint_radius = stress_to_end.length*9;
+      const endpoint_radius = stress_to_end.length * 9;
 
-      endpoints.push({x : endpointX,y : endpointY, r : endpoint_radius});
-
+      endpoints.push({ x: endpointX, y: endpointY, r: endpoint_radius });
     }
 
-    for (const [index, endpoint] of endpoints.entries()){
-
-      if (index < endpoints.length - 1){
+    for (const [index, endpoint] of endpoints.entries()) {
+      if (index < endpoints.length - 1) {
         const next_point = endpoints[index + 1];
 
-        this.drawQuadtraticCurve(endpoint.x,endpoint.y, next_point.x,next_point.y);
+        this.drawQuadtraticCurve(
+          endpoint.x,
+          endpoint.y,
+          next_point.x,
+          next_point.y,
+        );
       }
       this.drawCircle(endpoint.x, endpoint.y, endpoint.r, true);
-
-      
     }
-
   }
-  
 
   renderGraph(filter_value) {
-
     const ctx = this.ctx;
     const canvas = this.ctx.canvas;
 
@@ -222,27 +214,29 @@ export class RhymeGraph {
     ctx.fillStyle = this.background_color;
     ctx.fillRect(0, 0, canvas.drawingWidth, canvas.drawingHeight);
 
-    ctx.translate(this.offsetX, this.offsetY)
+    ctx.translate(this.offsetX, this.offsetY);
     ctx.scale(this.scale, this.scale);
 
-    ctx.translate(canvas.drawingWidth / 2, canvas.drawingHeight / 2)
+    ctx.translate(canvas.drawingWidth / 2, canvas.drawingHeight / 2);
 
     ctx.lineWidth = 3;
 
-    for (const path of this.rhyme_paths){
-
-      ctx.strokeStyle = `hsla(0, ${Math.min(path.length*10,100)}%, 47%, 0.6)`;
+    for (const path of this.rhyme_paths) {
+      ctx.strokeStyle = `hsla(0, ${Math.min(path.length * 10, 100)}%, 47%, 0.6)`;
 
       this.drawRhymePath(path);
     }
 
     ctx.lineWidth = 1;
-    ctx.strokeStyle = 'rgb(0, 0, 0)';
+    ctx.strokeStyle = "rgb(0, 0, 0)";
     for (const line of this.words) {
-
       for (const word of line) {
         for (const phone of word.phones) {
-          this.drawCircle(phone.x, phone.y, phone.primaryStress ? 7 : phone.secondaryStress ? 5 : 3);
+          this.drawCircle(
+            phone.x,
+            phone.y,
+            phone.primaryStress ? 7 : phone.secondaryStress ? 5 : 3,
+          );
         }
       }
     }
@@ -258,7 +252,7 @@ export class RhymeGraph {
     this.lastY = 0;
     this.offsetX = 0;
     this.offsetY = 0;
-    this.scale = 1
+    this.scale = 1;
 
     canvas.addEventListener("mousedown", (e) => {
       this.dragging = true;
@@ -309,7 +303,6 @@ export class RhymeGraph {
 
       this.renderGraph();
     });
-
   }
 }
 
@@ -317,13 +310,13 @@ class Phone {
   constructor(sound) {
     this.sound = sound;
 
-    if (sound.includes('ˈ')) {
+    if (sound.includes("ˈ")) {
       this.primaryStress = true;
     } else {
       this.primaryStress = false;
     }
 
-    if (sound.includes('ˌ')) {
+    if (sound.includes("ˌ")) {
       this.secondaryStress = true;
     } else {
       this.secondaryStress = false;
@@ -334,7 +327,6 @@ class Phone {
     this.x = x;
     this.y = y;
   }
-
 }
 
 class Word {
@@ -343,5 +335,4 @@ class Word {
     this.phones = phones;
     this.stress_to_end = stress_to_end;
   }
-
 }

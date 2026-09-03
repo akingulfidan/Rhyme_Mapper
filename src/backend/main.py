@@ -1,12 +1,16 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
-
-from pathlib import Path
-import json 
-
-from phoneme_analysis import get_available_languages, init_backend, generate_word_occurance_array, phonemize_text, generate_rhyme_paths
+from phoneme_analysis import (
+    generate_rhyme_paths,
+    generate_word_occurance_array,
+    get_available_languages,
+    init_backend,
+    phonemize_text,
+)
 from phonemizer.separator import Separator
+from pydantic import BaseModel
 
 BASE_DIR = Path(__file__).resolve().parent
 FRONTEND_DIR = BASE_DIR.parent / "frontend"
@@ -40,4 +44,4 @@ async def generate_phoneme_graph(user_input: userInput):
     return data
     
 
-app.mount("/front", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
+app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
