@@ -2,7 +2,7 @@
 
 Rhyme Mapper is a tool for visually exploring the phonetic structure and rhyme patterns of text, with a focus on poetry.
 
-![screenshot](assets/readme_photo.png)
+![screenshot](docs/readme_screenshot.png)
 
 
 The tool generates a phonetic representation of a poem where each phoneme is drawn as a circle. Phoneme size is used to indicate stress, with different sizes representing primary and secondary stress.
