@@ -81,6 +81,7 @@ genButton.addEventListener("click", async () => {
     result["word_array"],
     result["paths"],
   );
-
+  
+  rhymeGraph.reset_view();
   rhymeGraph.renderGraph();
 });

@@ -245,6 +245,14 @@ export class RhymeGraph {
     ctx.restore();
   }
 
+  reset_view() {
+    this.lastX = 0;
+    this.lastY = 0;
+    this.offsetX = 0;
+    this.offsetY = 0;
+    this.scale = 1;
+  }
+  
   initMouse() {
     const canvas = this.ctx.canvas;
 
