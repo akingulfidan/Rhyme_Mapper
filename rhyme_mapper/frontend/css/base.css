@@ -1,5 +1,6 @@
 body {
   display: flex;
+  margin: 0px;
 }
 
 canvas {
@@ -17,7 +18,22 @@ canvas {
   display: flex;
   flex: 1;
 
-  margin: 8px;
+  margin: 10px;
   flex-direction: column;
   z-index: 1;
 }
+
+
+.TabContent{
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  z-index: 1;
+}
+
+.TabContent[hidden]{
+  display: none;
+}
+
+
+

@@ -7,27 +7,36 @@
     <link rel="stylesheet" href="css/base.css" />
   </head>
 
-  <body style="margin: 0px">
+  <body>
     <div id="inputContainer">
-      <select id="language"></select>
-      <textarea
-        id="textInput"
-        placeholder="Enter text to analyse here..."
-      ></textarea>
-      <button id="GenerateButton">Generate</button>
+      <div id="tabs">
+        <button class="TabButton" data-tab="input">Input</button>
+        <button class="TabButton" data-tab="filters">Filters</button>
+      </div>
 
-      <label for="chainLength"
-        >Minimum Rhyme Chain Length:
-        <span id="chainLengthFilterValue">0</span></label
-      >
-      <input
-        type="range"
-        id="chainLength"
-        name="chainLength"
-        min="0"
-        max="0"
-        value="0"
-      />
+      <div id="input" class="TabContent">
+        <select id="language"></select>
+        <textarea
+          id="textInput"
+          placeholder="Enter text to analyse here..."
+        ></textarea>
+        <button id="GenerateButton">Generate</button>
+      </div>
+
+      <div id="filters" class="TabContent" hidden>
+        <label for="chainLength"
+          >Minimum Rhyme Chain Length:
+          <span id="chainLengthFilterValue">0</span></label
+        >
+        <input
+          type="range"
+          id="chainLength"
+          name="chainLength"
+          min="0"
+          max="0"
+          value="0"
+        />
+      </div>
     </div>
   </body>
 

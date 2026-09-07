@@ -1,6 +1,6 @@
 .venv
 .gitignore
 __pycache__
-assets
+docs
 dist
 README.md

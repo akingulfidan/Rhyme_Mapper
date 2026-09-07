@@ -519,7 +519,7 @@ wheels = [
 [[package]]
 name = "rhyme-mapper"
 version = "0.0.1"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "fastapi", extra = ["standard"] },
     { name = "phonemizer" },

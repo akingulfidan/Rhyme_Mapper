@@ -32,6 +32,11 @@ export class RhymeGraph {
 
   updatePositions() {
     if (this.graphState == "radial") {
+      const total_line_count = this.words.length;
+
+      const radius_shift = 50;
+      const phone_spacing = 0.2;
+
       const max_line_length = Math.max(
         ...this.words.map((line) => {
           let total_phones = 0;
@@ -42,10 +47,6 @@ export class RhymeGraph {
         }),
       );
 
-      const total_line_count = this.words.length;
-
-      const radius_shift = 50;
-      const phone_spacing = 0.2;
       const initial_radius =
         5 * max_line_length + total_line_count * radius_shift + 10;
 
@@ -206,7 +207,7 @@ export class RhymeGraph {
     }
   }
 
-  renderGraph(filter_value) {
+  renderGraph() {
     const ctx = this.ctx;
     const canvas = this.ctx.canvas;
 
