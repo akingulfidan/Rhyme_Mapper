@@ -1,6 +1,9 @@
+@import url("./themes.css");
+
 body {
   display: flex;
   margin: 0px;
+  background-color: var(--background);
 }
 
 canvas {
@@ -20,15 +23,12 @@ canvas {
 
   margin: 10px;
   flex-direction: column;
-  z-index: 1;
 }
-
 
 .TabContent{
   display: flex;
   flex: 1;
   flex-direction: column;
-  z-index: 1;
 }
 
 .TabContent[hidden]{

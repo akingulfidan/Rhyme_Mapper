@@ -34,10 +34,41 @@ for (const [code, name] of Object.entries(languages)) {
 // Initialize graph canvas
 
 const rhymeGraph = new RhymeGraph(2);
-
+const styles = getComputedStyle(document.documentElement);
+rhymeGraph.setColors({
+  background: styles.getPropertyValue("--background").trim(),
+  rhyme_path: styles.getPropertyValue("--rhyme_path_color").trim(),
+  phoneme: styles.getPropertyValue("--phoneme_color").trim()
+})
 window.addEventListener("resize", () => {
   (rhymeGraph.resizeCanvas(), rhymeGraph.renderGraph());
 });
+
+// Theme
+const theme_select = document.getElementById("theme");
+theme_select.addEventListener("change", (event) => {
+  const theme = event.target.value;
+  if (theme=="System"){
+    document.documentElement.removeAttribute("data-theme");
+  } else {
+    document.documentElement.dataset.theme = theme;
+  }
+})
+const theme_observer = new MutationObserver((mutationList) =>{
+  for (const mutation of mutationList){
+    if (mutation.attributeName == "data-theme"){
+      const styles = getComputedStyle(document.documentElement);
+      rhymeGraph.setColors({
+        background: styles.getPropertyValue("--background").trim(),
+        rhyme_path: styles.getPropertyValue("--rhyme_path_color").trim(),
+        phoneme: styles.getPropertyValue("--phoneme_color").trim()
+      }
+      )
+      rhymeGraph.renderGraph();
+    }
+  }
+})
+theme_observer.observe(document.documentElement,{attributes: true});
 
 // Chain length filter
 

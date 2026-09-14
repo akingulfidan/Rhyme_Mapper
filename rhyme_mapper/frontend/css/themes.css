@@ -1,0 +1,25 @@
+:root {
+  --background: rgb(225, 225, 225);
+  --rhyme_path_color: hsla(0, 84%, 40%, 0.6);
+  --phoneme_color: rgb(40, 40, 40);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+  --background: hsl(220, 13%, 18%);
+  --rhyme_path_color: hsla(0, 84%, 40%, 0.6);
+  --phoneme_color: hsl(215, 12%, 68%);
+  }
+}
+
+[data-theme="Light"] {
+  --background: rgb(225, 225, 225);
+  --rhyme_path_color: hsla(0, 84%, 40%, 0.6);
+  --phoneme_color: rgb(40, 40, 40);
+}
+
+[data-theme="Dark"] {
+  --background: hsl(220, 13%, 18%);
+  --rhyme_path_color: hsla(0, 84%, 40%, 0.6);
+  --phoneme_color: hsl(215, 12%, 68%);
+}

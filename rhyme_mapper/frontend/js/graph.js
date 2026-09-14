@@ -9,10 +9,21 @@ export class RhymeGraph {
     this.ctx = ctx;
     this.graphState = "radial";
     this.words = [];
-    this.background_color = "rgb(255, 255, 255)";
 
     this.resizeCanvas();
     this.initMouse();
+  }
+
+  setColors({ background, rhyme_path, phoneme }){
+    if (background !=undefined){
+      this.background_color = background;
+    }
+    if (rhyme_path != undefined){
+      this.rhyme_path_color = rhyme_path;
+    }
+    if (phoneme != undefined){
+      this.phoneme_color = phoneme;
+    }
   }
 
   resizeCanvas() {
@@ -221,26 +232,29 @@ export class RhymeGraph {
     ctx.translate(canvas.drawingWidth / 2, canvas.drawingHeight / 2);
 
     ctx.lineWidth = 3;
-
-    for (const path of this.rhyme_paths) {
-      ctx.strokeStyle = `hsla(0, ${Math.min(path.length * 10, 100)}%, 47%, 0.6)`;
-
-      this.drawRhymePath(path);
+    if (this.rhyme_paths){
+      for (const path of this.rhyme_paths) {
+        ctx.strokeStyle = hslaSetSaturation(this.rhyme_path_color,`${Math.min(path.length * 10, 100)}%`);
+        this.drawRhymePath(path);
+      }
     }
 
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = "rgb(0, 0, 0)";
-    for (const line of this.words) {
-      for (const word of line) {
-        for (const phone of word.phones) {
-          this.drawCircle(
-            phone.x,
-            phone.y,
-            phone.primaryStress ? 7 : phone.secondaryStress ? 5 : 3,
-          );
+    if (this.words){
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = this.phoneme_color;
+      for (const line of this.words) {
+        for (const word of line) {
+          for (const phone of word.phones) {
+            this.drawCircle(
+              phone.x,
+              phone.y,
+              phone.primaryStress ? 7 : phone.secondaryStress ? 5 : 3,
+            );
+          }
         }
       }
     }
+
 
     ctx.restore();
   }
@@ -344,4 +358,11 @@ class Word {
     this.phones = phones;
     this.stress_to_end = stress_to_end;
   }
+}
+
+function hslaSetSaturation(color, saturation) {
+  return color.replace(
+    /(hsla\(\s*[^,]+,\s*)[^,]+(,\s*[^,]+,\s*[^)]+\))/,
+    `$1${saturation}$2`
+  );
 }
