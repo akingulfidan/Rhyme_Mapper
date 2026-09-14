@@ -1,5 +1,10 @@
 import { RhymeGraph } from "./graph.js";
 
+// Get version
+const version_response = await fetch("/version");
+const version = await version_response.json();
+console.log(version);
+
 // Tabs
 const tabs = document.querySelectorAll(".TabButton");
 tabs.forEach(tab => {
