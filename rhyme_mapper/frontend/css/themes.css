@@ -2,6 +2,8 @@
   --background: rgb(225, 225, 225);
   --rhyme_path_color: hsla(0, 84%, 40%, 0.6);
   --phoneme_color: rgb(40, 40, 40);
+  --text_color: #000;
+  --accent: #cecece;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -9,6 +11,9 @@
   --background: hsl(220, 13%, 18%);
   --rhyme_path_color: hsla(0, 84%, 40%, 0.6);
   --phoneme_color: hsl(215, 12%, 68%);
+  --text_color: #ffffff;
+  --accent: hsl(225, 6%, 24%);
+
   }
 }
 
@@ -16,10 +21,14 @@
   --background: rgb(225, 225, 225);
   --rhyme_path_color: hsla(0, 84%, 40%, 0.6);
   --phoneme_color: rgb(40, 40, 40);
+  --text_color: #000;
+  --accent: #cecece;
 }
 
 [data-theme="Dark"] {
   --background: hsl(220, 13%, 18%);
   --rhyme_path_color: hsla(0, 84%, 40%, 0.6);
   --phoneme_color: hsl(215, 12%, 68%);
+  --text_color: #ffffff;
+  --accent: hsl(225, 6%, 24%);
 }

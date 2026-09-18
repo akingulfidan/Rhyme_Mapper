@@ -1,9 +1,13 @@
 @import url("./themes.css");
+@import url("./font.css");
+@import url("./tabs.css");
 
 body {
   display: flex;
   margin: 0px;
   background-color: var(--background);
+  font-family: "suse";
+  color: var(--text_color);
 }
 
 canvas {
@@ -20,20 +24,22 @@ canvas {
 #inputContainer {
   display: flex;
   flex: 1;
-
-  margin: 10px;
+  margin: 0px;
+  padding: 10px;
   flex-direction: column;
+  background-color: var(--background);
+  border-left: 2px solid var(--accent);  
 }
 
-.TabContent{
-  display: flex;
-  flex: 1;
-  flex-direction: column;
+select,
+input,
+textarea,
+button {
+  font-family: "suse";
+  color: var(--text_color);
+  background-color: var(--background);
+  border-radius: 5px;
+  font-size: 14pt;
+  border: 1px solid var(--accent);
+  font-weight: 400;
 }
-
-.TabContent[hidden]{
-  display: none;
-}
-
-
-
