@@ -19,6 +19,13 @@ canvas {
   height: 100%;
   box-sizing: border-box;
   resize: none;
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
+#language {
+  margin-top: 3px;
+  margin-bottom: 3px;
 }
 
 #inputContainer {
@@ -28,7 +35,25 @@ canvas {
   padding: 10px;
   flex-direction: column;
   background-color: var(--background);
-  border-left: 2px solid var(--accent);  
+  border-left: 2px solid var(--accent);
+}
+#GenerateButton{
+  margin-top: 3px;
+  margin-bottom: 3px;  
+}
+
+.InputRow {
+  display: flex;
+  align-items: flex-start;
+}
+.InputRow label {
+  font-size: 14pt;
+  margin-right: 5px;
+  text-align: center;
+}
+.InputRow,
+select {
+  flex: 1;
 }
 
 select,
@@ -42,4 +67,5 @@ button {
   font-size: 14pt;
   border: 1px solid var(--accent);
   font-weight: 400;
+  background-color: var(--secondary);
 }
