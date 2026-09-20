@@ -8,6 +8,9 @@ export class RhymeGraph {
       .attr("height", window.innerHeight);
 
     this.graph = this.container.append("g");
+    this.rhymeGroup = this.graph.append("g");
+    this.phonemeGroup = this.graph.append("g");
+    
     this.zoom = d3.zoom().on("zoom", (event) => {
       this.graph.attr("transform", event.transform);
     });
@@ -149,12 +152,12 @@ export class RhymeGraph {
   }
 
   drawPaths() {
-    const connections = this.graph
+    const connections = this.rhymeGroup
       .selectAll("g.RhymePath")
       .data(this.rhyme_paths)
       .join("g")
       .attr("class", "RhymePath")
-      .attr("data-path_length", path => path.length);
+      .attr("data-path_length", (path) => path.length);
 
     connections
       .selectAll("path")
@@ -198,7 +201,7 @@ export class RhymeGraph {
           last_x = x;
           last_y = y;
         }
-        
+
         return path;
       })
       .attr("stroke", function () {
@@ -210,7 +213,7 @@ export class RhymeGraph {
       .selectAll("circle.Background")
       .data((target) => target)
       .join("circle")
-      .attr("class", "Backgorund")
+      .attr("class", "Background")
       .attr("cx", (target) =>
         this.calculateRhymePosition(
           this.words[target[0]][target[1]].stress_to_end,
@@ -233,11 +236,14 @@ export class RhymeGraph {
       .data((target) => target)
       .join("circle")
       .attr("class", "PathTarget")
-      .attr("cx", (target) =>
-        this.calculateRhymePosition(
-          this.words[target[0]][target[1]].stress_to_end,
-          "x",
-        ),
+      .attr(
+        "cx",
+        (target) =>
+          this.calculateRhymePosition(
+            this.words[target[0]][target[1]].stress_to_end,
+            "x",
+          ),
+        this.phonemeGroup,
       )
       .attr("cy", (target) =>
         this.calculateRhymePosition(
@@ -256,7 +262,7 @@ export class RhymeGraph {
   }
 
   drawPhonemes() {
-    this.graph
+    this.phonemeGroup
       .selectAll("circle.Phoneme")
       .data(this.words.flat().flatMap((word) => word.phones))
       .join("circle")

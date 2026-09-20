@@ -4,7 +4,7 @@
     stroke: var(--phoneme_color);
     stroke-width: 1px;
 }
-.Backgorund {
+.Background {
     fill: var(--background);
     stroke: none;
 }
