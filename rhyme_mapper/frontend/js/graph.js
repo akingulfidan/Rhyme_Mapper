@@ -1,44 +1,50 @@
-export class RhymeGraph {
-  constructor(SSAA, context = "2d") {
-    // SSAA -> Super Sampling Anti-Aliasing
+import "./d3.v7.js";
 
-    const canvas = document.createElement("canvas");
-    document.body.prepend(canvas);
-    const ctx = canvas.getContext(context);
-    this.SSAA = SSAA;
-    this.ctx = ctx;
+export class RhymeGraph {
+  constructor() {
+    this.container = d3
+      .create("svg")
+      .attr("width", window.innerWidth * 0.7)
+      .attr("height", window.innerHeight);
+
+    this.graph = this.container.append("g");
+    this.zoom = d3.zoom().on("zoom", (event) => {
+      this.graph.attr("transform", event.transform);
+    });
+
+    this.identityTransform = d3.zoomIdentity.translate(
+      this.container.attr("width") / 2,
+      this.container.attr("height") / 2,
+    );
+
+    this.container.call(this.zoom, this.identityTransform);
     this.graphState = "radial";
     this.words = [];
 
-    this.resizeCanvas();
-    this.initMouse();
+    document.body.prepend(this.container.node());
   }
 
-  setColors({ background, rhyme_path, phoneme }){
-    if (background !=undefined){
+  setColors({ background, rhyme_path, phoneme }) {
+    if (background != undefined) {
       this.background_color = background;
     }
-    if (rhyme_path != undefined){
+    if (rhyme_path != undefined) {
       this.rhyme_path_color = rhyme_path;
     }
-    if (phoneme != undefined){
+    if (phoneme != undefined) {
       this.phoneme_color = phoneme;
     }
   }
 
   resizeCanvas() {
-    const canvas = this.ctx.canvas;
+    this.container
+      .attr("width", window.innerWidth * 0.7)
+      .attr("height", window.innerHeight);
 
-    canvas.drawingWidth = window.innerWidth * 0.7;
-    canvas.drawingHeight = window.innerHeight;
-
-    canvas.width = canvas.drawingWidth * this.SSAA;
-    canvas.height = canvas.drawingHeight * this.SSAA;
-
-    canvas.style.width = `${canvas.drawingWidth}px`;
-    canvas.style.height = `${canvas.drawingHeight}px`;
-
-    this.ctx.scale(this.SSAA, this.SSAA);
+    this.identityTransform = d3.zoomIdentity.translate(
+      this.container.attr("width") / 2,
+      this.container.attr("height") / 2,
+    );
   }
 
   updatePositions() {
@@ -91,14 +97,11 @@ export class RhymeGraph {
     this.graphState = mode;
     this.updatePositions();
   }
-
   updatePaths(paths) {
     this.rhyme_paths = paths;
   }
-
   inputData(lexicon, word_array, rhyme_paths) {
-    this.all_rhyme_paths = rhyme_paths.reverse(); // The array comes sorted from longest to shortest from the backend it is cleaner to draw the shortes first
-    this.rhyme_paths = this.all_rhyme_paths;
+    this.rhyme_paths = rhyme_paths.reverse(); // The array comes sorted from longest to shortest from the backend it is cleaner to draw the shortes first
     this.words = [];
 
     for (const line of word_array) {
@@ -133,199 +136,144 @@ export class RhymeGraph {
       }
       this.words.push(line_object_array);
     }
-
     this.updatePositions();
   }
 
-  drawCircle(x, y, radius, fill) {
-    const ctx = this.ctx;
-
-    ctx.beginPath();
-    ctx.arc(x, y, radius, 0, 2 * Math.PI);
-    if (fill) {
-      ctx.fill();
+  calculateRhymePosition(phones, dim) {
+    if (dim == "x") {
+      return phones.reduce((sum, phone) => sum + phone.x, 0) / phones.length;
     }
-    ctx.stroke();
-
-    ctx.closePath();
-  }
-
-  calculateRhymePosition(phones) {
-    const avgX =
-      phones.reduce((sum, phone) => sum + phone.x, 0) / phones.length;
-    const avgY =
-      phones.reduce((sum, phone) => sum + phone.y, 0) / phones.length;
-
-    return [avgX, avgY];
-  }
-
-  drawQuadtraticCurve(startX, startY, endX, endY) {
-    const ctx = this.ctx;
-
-    const dx = startX - endX;
-    const dy = startY - endY;
-
-    const amplitude = 50 + 0.5 * Math.hypot(dx, dy);
-
-    const perpendicular = {
-      x: -dy / Math.hypot(dx, dy),
-      y: dx / Math.hypot(dx, dy),
-    };
-
-    const mid = {
-      x: (startX + endX) / 2,
-      y: (startY + endY) / 2,
-    };
-
-    const control_point = {
-      x: mid.x + amplitude * perpendicular.x,
-      y: mid.y + amplitude * perpendicular.y,
-    };
-
-    ctx.beginPath();
-    ctx.moveTo(startX, startY);
-    ctx.quadraticCurveTo(control_point.x, control_point.y, endX, endY);
-    ctx.stroke();
-    ctx.closePath();
-  }
-
-  drawRhymePath(path) {
-    let endpoints = [];
-
-    for (const target of path) {
-      const [line, position] = target;
-      const word = this.words[line][position];
-      const stress_to_end = word.stress_to_end;
-
-      const [endpointX, endpointY] = this.calculateRhymePosition(stress_to_end);
-      const endpoint_radius = stress_to_end.length * 9;
-
-      endpoints.push({ x: endpointX, y: endpointY, r: endpoint_radius });
-    }
-
-    for (const [index, endpoint] of endpoints.entries()) {
-      if (index < endpoints.length - 1) {
-        const next_point = endpoints[index + 1];
-
-        this.drawQuadtraticCurve(
-          endpoint.x,
-          endpoint.y,
-          next_point.x,
-          next_point.y,
-        );
-      }
-      this.drawCircle(endpoint.x, endpoint.y, endpoint.r, true);
+    if (dim == "y") {
+      return phones.reduce((sum, phone) => sum + phone.y, 0) / phones.length;
     }
   }
 
-  renderGraph() {
-    const ctx = this.ctx;
-    const canvas = this.ctx.canvas;
+  drawPaths() {
+    const connections = this.graph
+      .selectAll("g.RhymePath")
+      .data(this.rhyme_paths)
+      .join("g")
+      .attr("class", "RhymePath")
+      .attr("data-path_length", path => path.length);
 
-    ctx.save();
-    ctx.fillStyle = this.background_color;
-    ctx.fillRect(0, 0, canvas.drawingWidth, canvas.drawingHeight);
+    connections
+      .selectAll("path")
+      .data((targets) => [targets])
+      .join("path")
+      .attr("class", "PathTargetConnection")
+      .attr("d", (targets) => {
+        const first_target = targets[0];
+        const start_phonemes =
+          this.words[first_target[0]][first_target[1]].stress_to_end;
+        var last_x = this.calculateRhymePosition(start_phonemes, "x");
+        var last_y = this.calculateRhymePosition(start_phonemes, "y");
+        var path = `M ${last_x},${last_y}`;
 
-    ctx.translate(this.offsetX, this.offsetY);
-    ctx.scale(this.scale, this.scale);
+        for (const target of targets.slice(1)) {
+          const target_phonemes =
+            this.words[target[0]][target[1]].stress_to_end;
+          const x = this.calculateRhymePosition(target_phonemes, "x");
+          const y = this.calculateRhymePosition(target_phonemes, "y");
 
-    ctx.translate(canvas.drawingWidth / 2, canvas.drawingHeight / 2);
+          const dx = last_x - x;
+          const dy = last_y - y;
+          const amplitude = 50 + 0.5 * Math.hypot(dx, dy);
 
-    ctx.lineWidth = 3;
-    if (this.rhyme_paths){
-      for (const path of this.rhyme_paths) {
-        ctx.strokeStyle = hslaSetSaturation(this.rhyme_path_color,`${Math.min(path.length * 10, 100)}%`);
-        this.drawRhymePath(path);
-      }
-    }
+          const perpendicular = {
+            x: -dy / Math.hypot(dx, dy),
+            y: dx / Math.hypot(dx, dy),
+          };
 
-    if (this.words){
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = this.phoneme_color;
-      for (const line of this.words) {
-        for (const word of line) {
-          for (const phone of word.phones) {
-            this.drawCircle(
-              phone.x,
-              phone.y,
-              phone.primaryStress ? 7 : phone.secondaryStress ? 5 : 3,
-            );
-          }
+          const mid = {
+            x: (last_x + x) / 2,
+            y: (last_y + y) / 2,
+          };
+
+          const control_point = {
+            x: mid.x + amplitude * perpendicular.x,
+            y: mid.y + amplitude * perpendicular.y,
+          };
+
+          path += ` Q ${control_point.x},${control_point.y} ${x},${y}`;
+          last_x = x;
+          last_y = y;
         }
-      }
-    }
+        
+        return path;
+      })
+      .attr("stroke", function () {
+        const connectionLength = d3.select(this.parentNode).datum().length;
+        return `hsla(from var(--rhyme_path_color) h ${Math.min(connectionLength * 10, 100)}% l / alpha)`;
+      });
 
+    connections
+      .selectAll("circle.Background")
+      .data((target) => target)
+      .join("circle")
+      .attr("class", "Backgorund")
+      .attr("cx", (target) =>
+        this.calculateRhymePosition(
+          this.words[target[0]][target[1]].stress_to_end,
+          "x",
+        ),
+      )
+      .attr("cy", (target) =>
+        this.calculateRhymePosition(
+          this.words[target[0]][target[1]].stress_to_end,
+          "y",
+        ),
+      )
+      .attr(
+        "r",
+        (target) => this.words[target[0]][target[1]].stress_to_end.length * 9,
+      );
 
-    ctx.restore();
+    connections
+      .selectAll("circle.PathTarget")
+      .data((target) => target)
+      .join("circle")
+      .attr("class", "PathTarget")
+      .attr("cx", (target) =>
+        this.calculateRhymePosition(
+          this.words[target[0]][target[1]].stress_to_end,
+          "x",
+        ),
+      )
+      .attr("cy", (target) =>
+        this.calculateRhymePosition(
+          this.words[target[0]][target[1]].stress_to_end,
+          "y",
+        ),
+      )
+      .attr(
+        "r",
+        (target) => this.words[target[0]][target[1]].stress_to_end.length * 9,
+      )
+      .attr("stroke", function () {
+        const connectionLength = d3.select(this.parentNode).datum().length;
+        return `hsla(from var(--rhyme_path_color) h ${Math.min(connectionLength * 10, 100)}% l / alpha)`;
+      });
+  }
+
+  drawPhonemes() {
+    this.graph
+      .selectAll("circle.Phoneme")
+      .data(this.words.flat().flatMap((word) => word.phones))
+      .join("circle")
+      .attr("class", "Phoneme")
+      .attr("cx", (phone) => phone.x)
+      .attr("cy", (phone) => phone.y)
+      .attr("r", (phone) =>
+        phone.primaryStress ? 7 : phone.secondaryStress ? 5 : 3,
+      );
+  }
+  renderGraph() {
+    this.drawPaths();
+    this.drawPhonemes();
   }
 
   reset_view() {
-    this.lastX = 0;
-    this.lastY = 0;
-    this.offsetX = 0;
-    this.offsetY = 0;
-    this.scale = 1;
-  }
-  
-  initMouse() {
-    const canvas = this.ctx.canvas;
-
-    this.dragging = false;
-    this.lastX = 0;
-    this.lastY = 0;
-    this.offsetX = 0;
-    this.offsetY = 0;
-    this.scale = 1;
-
-    canvas.addEventListener("mousedown", (e) => {
-      this.dragging = true;
-      this.lastX = e.clientX;
-      this.lastY = e.clientY;
-    });
-
-    canvas.addEventListener("mousemove", (e) => {
-      if (this.dragging) {
-        const dx = e.clientX - this.lastX;
-        const dy = e.clientY - this.lastY;
-
-        this.offsetX += dx;
-        this.offsetY += dy;
-
-        this.lastX = e.clientX;
-        this.lastY = e.clientY;
-
-        this.renderGraph();
-      }
-    });
-
-    canvas.addEventListener("mouseup", () => {
-      this.dragging = false;
-    });
-
-    canvas.addEventListener("mouseleave", () => {
-      this.dragging = false;
-    });
-
-    canvas.addEventListener("wheel", (e) => {
-      e.preventDefault();
-
-      const rect = canvas.getBoundingClientRect();
-
-      const mouseX = e.clientX - rect.left;
-      const mouseY = e.clientY - rect.top;
-
-      const worldX = (mouseX - this.offsetX) / this.scale;
-      const worldY = (mouseY - this.offsetY) / this.scale;
-
-      const zoom = e.deltaY < 0 ? 1.1 : 0.9;
-
-      this.scale *= zoom;
-
-      this.offsetX = mouseX - worldX * this.scale;
-      this.offsetY = mouseY - worldY * this.scale;
-
-      this.renderGraph();
-    });
+    this.container.call(this.zoom.transform, this.identityTransform);
   }
 }
 
@@ -358,11 +306,4 @@ class Word {
     this.phones = phones;
     this.stress_to_end = stress_to_end;
   }
-}
-
-function hslaSetSaturation(color, saturation) {
-  return color.replace(
-    /(hsla\(\s*[^,]+,\s*)[^,]+(,\s*[^,]+,\s*[^)]+\))/,
-    `$1${saturation}$2`
-  );
 }

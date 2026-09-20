@@ -1,0 +1,19 @@
+
+.Phoneme {
+    fill: transparent;
+    stroke: var(--phoneme_color);
+    stroke-width: 1px;
+}
+.Backgorund {
+    fill: var(--background);
+    stroke: none;
+}
+
+.PathTarget{
+    fill: transparent;
+    stroke-width: 2px;
+}
+.PathTargetConnection{
+    fill: transparent;
+    stroke-width: 2px;
+}

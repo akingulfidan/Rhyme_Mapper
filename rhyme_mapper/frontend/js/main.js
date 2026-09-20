@@ -33,15 +33,10 @@ for (const [code, name] of Object.entries(languages)) {
 
 // Initialize graph canvas
 
-const rhymeGraph = new RhymeGraph(2);
-const styles = getComputedStyle(document.documentElement);
-rhymeGraph.setColors({
-  background: styles.getPropertyValue("--background").trim(),
-  rhyme_path: styles.getPropertyValue("--rhyme_path_color").trim(),
-  phoneme: styles.getPropertyValue("--phoneme_color").trim()
-})
+const rhymeGraph = new RhymeGraph();
+
 window.addEventListener("resize", () => {
-  (rhymeGraph.resizeCanvas(), rhymeGraph.renderGraph());
+  (rhymeGraph.resizeCanvas());
 });
 
 // Theme
@@ -54,21 +49,6 @@ theme_select.addEventListener("change", (event) => {
     document.documentElement.dataset.theme = theme;
   }
 })
-const theme_observer = new MutationObserver((mutationList) =>{
-  for (const mutation of mutationList){
-    if (mutation.attributeName == "data-theme"){
-      const styles = getComputedStyle(document.documentElement);
-      rhymeGraph.setColors({
-        background: styles.getPropertyValue("--background").trim(),
-        rhyme_path: styles.getPropertyValue("--rhyme_path_color").trim(),
-        phoneme: styles.getPropertyValue("--phoneme_color").trim()
-      }
-      )
-      rhymeGraph.renderGraph();
-    }
-  }
-})
-theme_observer.observe(document.documentElement,{attributes: true});
 
 // Chain length filter
 
@@ -117,7 +97,6 @@ genButton.addEventListener("click", async () => {
     result["word_array"],
     result["paths"],
   );
-  
   rhymeGraph.reset_view();
   rhymeGraph.renderGraph();
 });

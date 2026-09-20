@@ -1,6 +1,7 @@
 @import url("./themes.css");
 @import url("./font.css");
 @import url("./tabs.css");
+@import url("./graph_elements.css");
 
 body {
   display: flex;
