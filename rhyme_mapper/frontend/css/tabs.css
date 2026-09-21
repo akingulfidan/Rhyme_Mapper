@@ -15,16 +15,18 @@
   justify-content: center;
   align-items: center;
   background-color: var(--background);
-
 }
 
-.TabContent{
+.TabContent {
   display: flex;
-  flex: 1;
+  flex-grow: 0;
   flex-direction: column;
 }
 
-.TabContent[hidden]{
-  display: none;
+#input {
+  flex: 1;
 }
 
+.TabContent[hidden] {
+  display: none;
+}

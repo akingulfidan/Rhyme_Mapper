@@ -8,9 +8,9 @@ export class RhymeGraph {
       .attr("height", window.innerHeight);
 
     this.graph = this.container.append("g");
-    this.rhymeGroup = this.graph.append("g");
-    this.phonemeGroup = this.graph.append("g");
-    
+    this.rhymeGroup = this.graph.append("g").attr("class", "RhymeGroup");
+    this.phonemeGroup = this.graph.append("g").attr("class", "PhonemeGroup");
+
     this.zoom = d3.zoom().on("zoom", (event) => {
       this.graph.attr("transform", event.transform);
     });
@@ -150,6 +150,45 @@ export class RhymeGraph {
       return phones.reduce((sum, phone) => sum + phone.y, 0) / phones.length;
     }
   }
+  createSvgPath(target_words) {
+    const first_target = target_words[0];
+    const start_phonemes =
+      this.words[first_target[0]][first_target[1]].stress_to_end;
+    var last_x = this.calculateRhymePosition(start_phonemes, "x");
+    var last_y = this.calculateRhymePosition(start_phonemes, "y");
+    var path = `M ${last_x},${last_y}`;
+
+    for (const target of target_words.slice(1)) {
+      const target_phonemes = this.words[target[0]][target[1]].stress_to_end;
+      const x = this.calculateRhymePosition(target_phonemes, "x");
+      const y = this.calculateRhymePosition(target_phonemes, "y");
+
+      const dx = last_x - x;
+      const dy = last_y - y;
+      const amplitude = 50 + 0.5 * Math.hypot(dx, dy);
+
+      const perpendicular = {
+        x: -dy / Math.hypot(dx, dy),
+        y: dx / Math.hypot(dx, dy),
+      };
+
+      const mid = {
+        x: (last_x + x) / 2,
+        y: (last_y + y) / 2,
+      };
+
+      const control_point = {
+        x: mid.x + amplitude * perpendicular.x,
+        y: mid.y + amplitude * perpendicular.y,
+      };
+
+      path += ` Q ${control_point.x},${control_point.y} ${x},${y}`;
+      last_x = x;
+      last_y = y;
+    }
+
+    return path;
+  }
 
   drawPaths() {
     const connections = this.rhymeGroup
@@ -164,46 +203,7 @@ export class RhymeGraph {
       .data((targets) => [targets])
       .join("path")
       .attr("class", "PathTargetConnection")
-      .attr("d", (targets) => {
-        const first_target = targets[0];
-        const start_phonemes =
-          this.words[first_target[0]][first_target[1]].stress_to_end;
-        var last_x = this.calculateRhymePosition(start_phonemes, "x");
-        var last_y = this.calculateRhymePosition(start_phonemes, "y");
-        var path = `M ${last_x},${last_y}`;
-
-        for (const target of targets.slice(1)) {
-          const target_phonemes =
-            this.words[target[0]][target[1]].stress_to_end;
-          const x = this.calculateRhymePosition(target_phonemes, "x");
-          const y = this.calculateRhymePosition(target_phonemes, "y");
-
-          const dx = last_x - x;
-          const dy = last_y - y;
-          const amplitude = 50 + 0.5 * Math.hypot(dx, dy);
-
-          const perpendicular = {
-            x: -dy / Math.hypot(dx, dy),
-            y: dx / Math.hypot(dx, dy),
-          };
-
-          const mid = {
-            x: (last_x + x) / 2,
-            y: (last_y + y) / 2,
-          };
-
-          const control_point = {
-            x: mid.x + amplitude * perpendicular.x,
-            y: mid.y + amplitude * perpendicular.y,
-          };
-
-          path += ` Q ${control_point.x},${control_point.y} ${x},${y}`;
-          last_x = x;
-          last_y = y;
-        }
-
-        return path;
-      })
+      .attr("d", (targets) => this.createSvgPath(targets))
       .attr("stroke", function () {
         const connectionLength = d3.select(this.parentNode).datum().length;
         return `hsla(from var(--rhyme_path_color) h ${Math.min(connectionLength * 10, 100)}% l / alpha)`;
@@ -281,7 +281,24 @@ export class RhymeGraph {
   reset_view() {
     this.container.call(this.zoom.transform, this.identityTransform);
   }
+
+  filter(filter_set) {
+    this.rhymeGroup
+      .selectAll(".RhymePath")
+      .style("display", (path) => {
+        for (const filter of filter_set){
+          if (!filter(path)){
+            return "none";
+          }
+        }
+        
+        return null;
+
+      });
+  }
+
 }
+
 
 class Phone {
   constructor(sound) {

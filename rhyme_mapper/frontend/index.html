@@ -28,14 +28,30 @@
 
       <div id="filters" class="TabContent" hidden>
         <div class="InputRow">
-          <label for="chainLength"
-            >Minimum Rhyme Chain Length:
-            <span id="chainLengthFilterValue">0</span></label
+          <input type="checkbox" id="EnableMinLength" class="Checkbox">
+          <label for="MinLength"
+            >Minimum Length:
+            <span id="MinLengthFilterValue">0</span></label
           >
           <input
             type="range"
-            id="chainLength"
-            name="chainLength"
+            id="MinLength"
+            name="MinLength"
+            min="0"
+            max="0"
+            value="0"
+          />
+        </div>
+        <div class="InputRow">
+          <input type="checkbox" id="EnableMaxLength">
+          <label for="MaxLength"
+            >Maximum Length:
+            <span id="MaxLengthFilterValue">0</span></label
+          >
+          <input
+            type="range"
+            id="MaxLength"
+            name="MaxLength"
             min="0"
             max="0"
             value="0"

@@ -1,4 +1,5 @@
 import { RhymeGraph } from "./graph.js";
+import { min_length_filter, max_length_filter } from "./filters.js";
 
 // Get version
 const version_response = await fetch("/version");
@@ -7,12 +8,14 @@ console.log(version);
 
 // Tabs
 const tabs = document.querySelectorAll(".TabButton");
-tabs.forEach(tab => {
-  tab.addEventListener('click', () => {
+tabs.forEach((tab) => {
+  tab.addEventListener("click", () => {
     const target_tab = document.getElementById(tab.dataset.tab);
-    document.querySelectorAll(".TabContent").forEach(tab_content => {tab_content.hidden=true;});
+    document.querySelectorAll(".TabContent").forEach((tab_content) => {
+      tab_content.hidden = true;
+    });
     target_tab.hidden = false;
-  })
+  });
 });
 
 // Language list dropdown
@@ -36,37 +39,79 @@ for (const [code, name] of Object.entries(languages)) {
 const rhymeGraph = new RhymeGraph();
 
 window.addEventListener("resize", () => {
-  (rhymeGraph.resizeCanvas());
+  rhymeGraph.resizeCanvas();
 });
 
 // Theme
 const theme_select = document.getElementById("theme");
 theme_select.addEventListener("change", (event) => {
   const theme = event.target.value;
-  if (theme=="System"){
+  if (theme == "System") {
     document.documentElement.removeAttribute("data-theme");
   } else {
     document.documentElement.dataset.theme = theme;
   }
-})
+});
 
-// Chain length filter
+// Filters
+const filters = new Set();
 
-const chainLengthFilter = document.getElementById("chainLength");
-const chainLengthFilterLabel = document.getElementById(
-  "chainLengthFilterValue",
-);
+// Min Length Filter
+const MinLengthFilter = document.getElementById("MinLength");
+const MinLengthFilterLabel = document.getElementById("MinLengthFilterValue");
+const EnableMinLengthFilter = document.getElementById("EnableMinLength");
 
-chainLengthFilter.addEventListener("input", () => {
-  const value = chainLengthFilter.value;
+let min_length = min_length_filter(Number(MinLengthFilter.value));
 
-  chainLengthFilterLabel.textContent = value;
-  const filtered_paths = rhymeGraph.all_rhyme_paths.filter(
-    (path) => path.length >= value,
-  );
+EnableMinLengthFilter.addEventListener("change", () => {
+  if (EnableMinLengthFilter.checked) {
+    filters.add(min_length);
+    rhymeGraph.filter(filters);
+  } else {
+    filters.delete(min_length);
+    rhymeGraph.filter(filters);
+  }
+});
 
-  rhymeGraph.rhyme_paths = filtered_paths;
-  rhymeGraph.renderGraph();
+MinLengthFilter.addEventListener("input", () => {
+  const value = MinLengthFilter.value;
+  MinLengthFilterLabel.textContent = value;
+  if (EnableMinLengthFilter.checked) {
+    filters.delete(min_length);
+    min_length = min_length_filter(Number(value));
+    filters.add(min_length);
+    rhymeGraph.filter(filters);
+  }
+});
+
+// Max Length Filter
+
+const MaxLengthFilter = document.getElementById("MaxLength");
+const MaxLengthFilterLabel = document.getElementById("MaxLengthFilterValue");
+const EnableMaxLengthFilter = document.getElementById("EnableMaxLength");
+
+let max_length = max_length_filter(Number(MaxLengthFilter.value));
+
+EnableMaxLengthFilter.addEventListener("change", () => {
+  filters.add(max_length);
+  filters.delete(max_length);
+
+  if (EnableMaxLengthFilter.checked) {
+    rhymeGraph.filter(filters);
+  }
+});
+
+MaxLengthFilter.addEventListener("input", () => {
+  const value = MaxLengthFilter.value;
+  MaxLengthFilterLabel.textContent = value;
+  
+  filters.delete(max_length);
+  max_length = max_length_filter(Number(value));
+  filters.add(max_length);
+
+  if (EnableMaxLengthFilter.checked) {
+    rhymeGraph.filter(filters);
+  }
 });
 
 // Textarea and generate button
@@ -90,7 +135,8 @@ genButton.addEventListener("click", async () => {
   const maxChainLength = Math.max(
     ...result["paths"].map((path) => path.length),
   );
-  chainLengthFilter.max = maxChainLength;
+  MinLengthFilter.max = maxChainLength;
+  MaxLengthFilter.max = maxChainLength;
 
   rhymeGraph.inputData(
     result["lexicon"],

@@ -38,23 +38,31 @@ canvas {
   background-color: var(--background);
   border-left: 2px solid var(--accent);
 }
-#GenerateButton{
+#GenerateButton {
   margin-top: 3px;
-  margin-bottom: 3px;  
+  margin-bottom: 3px;
 }
 
 .InputRow {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  margin-top: 10px;
 }
+
 .InputRow label {
-  font-size: 14pt;
-  margin-right: 5px;
+  font-size: 12pt;
+  margin: 0 5px;
   text-align: center;
+  flex: 0 0 auto;
 }
-.InputRow,
-select {
+
+.InputRow input[type="checkbox"] {
+  flex: 0 0 auto;
+}
+
+.InputRow input[type="range"] {
   flex: 1;
+  min-width: 0;
 }
 
 select,
