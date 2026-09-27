@@ -10,6 +10,8 @@ export class RhymeGraph {
     this.graph = this.container.append("g");
     this.rhymeGroup = this.graph.append("g").attr("class", "RhymeGroup");
     this.phonemeGroup = this.graph.append("g").attr("class", "PhonemeGroup");
+    this.maxPathLength = 0;
+    this.onDataChanged = [];
 
     this.zoom = d3.zoom().on("zoom", (event) => {
       this.graph.attr("transform", event.transform);
@@ -106,6 +108,9 @@ export class RhymeGraph {
   inputData(lexicon, word_array, rhyme_paths) {
     this.rhyme_paths = rhyme_paths.reverse(); // The array comes sorted from longest to shortest from the backend it is cleaner to draw the shortes first
     this.words = [];
+    this.maxPathLength = Math.max(
+      ...rhyme_paths.map((path) => path.length),
+    );
 
     for (const line of word_array) {
       let line_object_array = [];
@@ -139,7 +144,14 @@ export class RhymeGraph {
       }
       this.words.push(line_object_array);
     }
+    
+    for (const callback of this.onDataChanged){
+      callback();
+    }
+
     this.updatePositions();
+    this.reset_view();
+    this.renderGraph();
   }
 
   calculateRhymePosition(phones, dim) {
