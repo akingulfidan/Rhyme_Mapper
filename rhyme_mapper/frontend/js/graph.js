@@ -23,7 +23,7 @@ export class RhymeGraph {
     );
 
     this.container.call(this.zoom, this.identityTransform);
-    this.graphState = "radial";
+    this.graphState = "linear";
     this.words = [];
 
     document.body.prepend(this.container.node());
@@ -52,6 +52,18 @@ export class RhymeGraph {
     );
   }
 
+  maxLineLength() {
+    return Math.max(
+      ...this.words.map((line) => {
+        let total_phones = 0;
+        for (const word of line) {
+          total_phones += word.phones.length;
+        }
+        return total_phones;
+      }),
+    );
+  }
+
   updatePositions() {
     if (this.graphState == "radial") {
       const total_line_count = this.words.length;
@@ -59,16 +71,7 @@ export class RhymeGraph {
       const radius_shift = 50;
       const phone_spacing = 0.2;
 
-      const max_line_length = Math.max(
-        ...this.words.map((line) => {
-          let total_phones = 0;
-          for (const word of line) {
-            total_phones += word.phones.length;
-          }
-          return total_phones;
-        }),
-      );
-
+      const max_line_length = this.maxLineLength();
       const initial_radius =
         5 * max_line_length + total_line_count * radius_shift + 10;
 
@@ -95,22 +98,42 @@ export class RhymeGraph {
     }
 
     if (this.graphState == "linear") {
+      const line_shift = 50;
+      const phone_spacing = 14;
+
+      for (const [lineIndex, line] of this.words.entries()) {
+        let phone_count = 0;
+        for (const [wordIndex, word] of line.entries()) {
+          const word_shift = wordIndex * 2 * phone_spacing;
+
+          for (const phone of word.phones) {
+            const x = phone_count * phone_spacing + word_shift;
+            const y = lineIndex * line_shift;
+
+            phone.assignPosition(x, y);
+
+            phone_count++;
+          }
+        }
+      }
     }
   }
 
   graphMode(mode) {
     this.graphState = mode;
     this.updatePositions();
+    this.reset_view();
+    this.renderGraph();
   }
+
   updatePaths(paths) {
     this.rhyme_paths = paths;
   }
+
   inputData(lexicon, word_array, rhyme_paths) {
     this.rhyme_paths = rhyme_paths.reverse(); // The array comes sorted from longest to shortest from the backend it is cleaner to draw the shortes first
     this.words = [];
-    this.maxPathLength = Math.max(
-      ...rhyme_paths.map((path) => path.length),
-    );
+    this.maxPathLength = Math.max(...rhyme_paths.map((path) => path.length));
 
     for (const line of word_array) {
       let line_object_array = [];
@@ -144,8 +167,8 @@ export class RhymeGraph {
       }
       this.words.push(line_object_array);
     }
-    
-    for (const callback of this.onDataChanged){
+
+    for (const callback of this.onDataChanged) {
       callback();
     }
 
@@ -162,6 +185,7 @@ export class RhymeGraph {
       return phones.reduce((sum, phone) => sum + phone.y, 0) / phones.length;
     }
   }
+
   createSvgPath(target_words) {
     const first_target = target_words[0];
     const start_phonemes =
@@ -285,6 +309,7 @@ export class RhymeGraph {
         phone.primaryStress ? 7 : phone.secondaryStress ? 5 : 3,
       );
   }
+
   renderGraph() {
     this.drawPaths();
     this.drawPhonemes();
@@ -295,22 +320,17 @@ export class RhymeGraph {
   }
 
   filter(filter_set) {
-    this.rhymeGroup
-      .selectAll(".RhymePath")
-      .style("display", (path) => {
-        for (const filter of filter_set){
-          if (!filter(path)){
-            return "none";
-          }
+    this.rhymeGroup.selectAll(".RhymePath").style("display", (path) => {
+      for (const filter of filter_set) {
+        if (!filter(path)) {
+          return "none";
         }
-        
-        return null;
+      }
 
-      });
+      return null;
+    });
   }
-
 }
-
 
 class Phone {
   constructor(sound) {
