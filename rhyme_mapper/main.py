@@ -25,6 +25,7 @@ separator = Separator(phone=" ", word=None)
 class userInput(BaseModel):
     selected_lang: str
     input_text: str
+    window_size: int
 
 
 @app.get("/lang")
@@ -38,7 +39,7 @@ async def generate_phoneme_graph(user_input: userInput):
     backend = init_backend(user_input.selected_lang)
     word_array = generate_word_occurance_array(user_input.input_text)
     lexicon = phonemize_text(word_array, backend, separator)
-    paths = generate_rhyme_paths(lexicon, word_array)
+    paths = generate_rhyme_paths(lexicon, word_array, user_input.window_size)
 
     data = {"lexicon": lexicon, "word_array": word_array, "paths": paths}
     return data

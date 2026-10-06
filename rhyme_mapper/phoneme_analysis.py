@@ -65,12 +65,12 @@ def find_rhyme(
     start_index: int,
     word_array: list[list[str]],
     lexicon: dict[str, tuple[str, ...]],
-    window_length: int,
+    window_size: int,
     path_array: list,
 ) -> list[list[int]]:
 
     first_phone = lexicon[word_array[start_index]]
-    for shift in range(1, window_length + 1):
+    for shift in range(1, window_size + 1):
         try:
             second_phone = lexicon[word_array[start_index + shift]]
         except IndexError:
@@ -79,7 +79,7 @@ def find_rhyme(
         if check_rhyme(first_phone, second_phone):
             path_array.append(start_index + shift)
             return find_rhyme(
-                start_index + shift, word_array, lexicon, window_length, path_array
+                start_index + shift, word_array, lexicon, window_size, path_array
             )
 
     return path_array
@@ -110,14 +110,14 @@ def flat_to_2d_array(flat_index: int, word_array: list[list[str]]) -> tuple[int,
 
 
 def generate_rhyme_paths(
-    lexicon: dict[str, tuple[str, ...]], word_array: list[list[str]]
+    lexicon: dict[str, tuple[str, ...]], word_array: list[list[str]], window_size: int
 ) -> list[list[tuple[int, int]]]:
 
     word_array_flat = [word for line in word_array for word in line]
     rhyme_paths = []
 
     for index in range(len(word_array_flat)):
-        rhyme_path = find_rhyme(index, word_array_flat, lexicon, 25, [])
+        rhyme_path = find_rhyme(index, word_array_flat, lexicon, window_size, [])
         if rhyme_path:
             rhyme_path.insert(0, index)
             rhyme_paths.append(rhyme_path)
