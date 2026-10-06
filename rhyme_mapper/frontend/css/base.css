@@ -65,6 +65,16 @@ canvas {
   min-width: 0;
 }
 
+.InputRow input[type="number"] {
+  flex: 1;
+  min-width: 0;
+}
+
+.InputRow select {
+  flex: 1;
+  min-width: 0;
+}
+
 select,
 input,
 textarea,
