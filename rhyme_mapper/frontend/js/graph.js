@@ -1,4 +1,4 @@
-import "./d3.v7.js";
+import "./lib/d3.v7.js";
 
 export class RhymeGraph {
   constructor() {
@@ -122,7 +122,7 @@ export class RhymeGraph {
   graphMode(mode) {
     this.graphState = mode;
     this.updatePositions();
-    this.reset_view();
+    this.resetView();
     this.renderGraph();
   }
 
@@ -173,7 +173,7 @@ export class RhymeGraph {
     }
 
     this.updatePositions();
-    this.reset_view();
+    this.resetView();
     this.renderGraph();
   }
 
@@ -315,7 +315,7 @@ export class RhymeGraph {
     this.drawPhonemes();
   }
 
-  reset_view() {
+  resetView() {
     this.container.call(this.zoom.transform, this.identityTransform);
   }
 
@@ -329,6 +329,9 @@ export class RhymeGraph {
 
       return null;
     });
+  }
+  getSvgElement() {
+    return d3.select('svg').node();
   }
 }
 

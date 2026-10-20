@@ -4,9 +4,9 @@ import { init_tabs } from "./tabs.js";
 import { init_filters } from "./filters.js";
 import { init_settings } from "./settings.js";
 import { init_parameters } from "./parameters.js";
+import { init_export } from "./export.js";
 
 // Initialize graph canvas
-
 const rhymeGraph = new RhymeGraph();
 
 window.addEventListener("resize", () => {
@@ -17,6 +17,7 @@ init_tabs();
 await init_input(rhymeGraph);
 init_filters(rhymeGraph);
 init_parameters(rhymeGraph);
+init_export(rhymeGraph);
 init_settings();
 
 // Get version
