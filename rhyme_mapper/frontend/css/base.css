@@ -85,3 +85,7 @@ button {
   flex: 1;
   min-width: 0;
 }
+
+.InputRow button {
+  flex: 1;
+}
