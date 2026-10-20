@@ -11,8 +11,18 @@ body {
   color: var(--text_color);
 }
 
-canvas {
-  display: flex;
+select,
+input,
+textarea,
+button {
+  font-family: "suse";
+  color: var(--text_color);
+  background-color: var(--background);
+  border-radius: 5px;
+  font-size: 14pt;
+  border: 1px solid var(--accent);
+  font-weight: 400;
+  background-color: var(--secondary);
 }
 
 #textInput {
@@ -38,6 +48,7 @@ canvas {
   background-color: var(--background);
   border-left: 2px solid var(--accent);
 }
+
 #GenerateButton {
   margin-top: 3px;
   margin-bottom: 3px;
@@ -73,18 +84,4 @@ canvas {
 .InputRow select {
   flex: 1;
   min-width: 0;
-}
-
-select,
-input,
-textarea,
-button {
-  font-family: "suse";
-  color: var(--text_color);
-  background-color: var(--background);
-  border-radius: 5px;
-  font-size: 14pt;
-  border: 1px solid var(--accent);
-  font-weight: 400;
-  background-color: var(--secondary);
 }
