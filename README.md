@@ -61,17 +61,18 @@ Rhyme Mapper is accessible at http://localhost:8000
 Phonemization in Rhyme Mapper is done using [Phonemizer](https://github.com/bootphon/phonemizer) library.
 
 ```bibtex
-@article{Bernard2021,
-doi = {10.21105/joss.03958},
-url = {https://doi.org/10.21105/joss.03958},
-year = {2021},
-publisher = {The Open Journal},
-volume = {6},
-number = {68},
-pages = {3958},
-author = {Mathieu Bernard and Hadrien Titeux},
-title = {Phonemizer: Text to Phones Transcription for Multiple Languages in Python},
-journal = {Journal of Open Source Software}
+@article{
+    Bernard2021,
+    doi = {10.21105/joss.03958},
+    url = {https://doi.org/10.21105/joss.03958},
+    year = {2021},
+    publisher = {The Open Journal},
+    volume = {6},
+    number = {68},
+    pages = {3958},
+    author = {Mathieu Bernard and Hadrien Titeux},
+    title = {Phonemizer: Text to Phones Transcription for Multiple Languages in Python},
+    journal = {Journal of Open Source Software}
 }
 ```
 ## License
