@@ -11,8 +11,6 @@ Using phoneme sequences, the tool detects chains of rhyming words and represents
 
 Rhyme Mapper supports [127 languages](https://github.com/espeak-ng/espeak-ng/blob/master/docs/languages.md) supported by espeak-ng.
 
-The project is ongoing and still in its early stages.
-
 ## Installation
 
 ### Pip
