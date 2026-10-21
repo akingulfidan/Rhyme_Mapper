@@ -2,6 +2,7 @@
 .gitignore
 __pycache__
 node_modules
+frontend
 docs
 dist
 README.md

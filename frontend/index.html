@@ -10,11 +10,46 @@
   <body>
     <div id="inputContainer">
       <div id="tabs">
-        <button class="TabButton" role="tab" aria-selected="true"  data-tab="input">Input</button>
-        <button class="TabButton" role="tab" aria-selected="false" data-tab="filters">Filters</button>
-        <button class="TabButton" role="tab" aria-selected="false" data-tab="parameters">Parameters</button>
-        <button class="TabButton" role="tab" aria-selected="false" data-tab="export">Export</button>
-        <button class="TabButton" role="tab" aria-selected="false" data-tab="settings">Settings</button>
+        <button
+          class="TabButton"
+          role="tab"
+          aria-selected="true"
+          data-tab="input"
+        >
+          Input
+        </button>
+        <button
+          class="TabButton"
+          role="tab"
+          aria-selected="false"
+          data-tab="filters"
+        >
+          Filters
+        </button>
+        <button
+          class="TabButton"
+          role="tab"
+          aria-selected="false"
+          data-tab="parameters"
+        >
+          Parameters
+        </button>
+        <button
+          class="TabButton"
+          role="tab"
+          aria-selected="false"
+          data-tab="export"
+        >
+          Export
+        </button>
+        <button
+          class="TabButton"
+          role="tab"
+          aria-selected="false"
+          data-tab="settings"
+        >
+          Settings
+        </button>
       </div>
 
       <div id="input" class="TabContent">
@@ -83,9 +118,15 @@
         <div class="InputRow">
           <button id="exportSvg">Export SVG</button>
         </div>
+        <div class="InputRow">
+          <button id="exportPng">Export PNG</button>
+        </div>
+        <div class="InputRow">
+          <button id="exportJpeg">Export JPEG</button>
+        </div>
       </div>
     </div>
   </body>
-  
+
   <script type="module" src="js/main.js"></script>
 </html>

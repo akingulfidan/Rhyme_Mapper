@@ -3,7 +3,6 @@ export function init_settings() {
 }
 
 // Theme
-
 function init_theme_select() {
   const theme_select = document.getElementById("theme");
 
