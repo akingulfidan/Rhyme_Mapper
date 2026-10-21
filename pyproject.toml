@@ -15,7 +15,7 @@ keywords = [
     "rhyme-detection"
 ]
 
-version = "0.0.1"
+version = "0.0.2"
 requires-python = ">=3.14"
 dependencies = [
     "fastapi[standard]>=0.141.1",

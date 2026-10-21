@@ -1,6 +1,7 @@
+import os
 from importlib.metadata import version
 from pathlib import Path
-import os
+
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from phonemizer.separator import Separator
