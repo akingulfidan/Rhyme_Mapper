@@ -1,6 +1,7 @@
 .venv
 .gitignore
 __pycache__
+node_modules
 docs
 dist
 README.md

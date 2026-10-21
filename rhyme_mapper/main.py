@@ -16,7 +16,7 @@ from rhyme_mapper.phoneme_analysis import (
 
 __version__ = version("rhyme_mapper")
 BASE_DIR = Path(__file__).resolve().parent
-FRONTEND_DIR = BASE_DIR / "frontend"
+FRONTEND_DIR = BASE_DIR / "static"
 app = FastAPI()
 
 separator = Separator(phone=" ", word=None)

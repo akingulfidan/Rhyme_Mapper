@@ -1,4 +1,4 @@
-import * as svgExport from "./lib/svg-export.esm.min.js";
+import * as svgExport from "svg-exportjs-browser";
 
 export function init_export(rhymeGraph) {
   init_svg_export(rhymeGraph);
