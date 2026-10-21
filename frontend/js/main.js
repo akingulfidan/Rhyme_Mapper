@@ -21,6 +21,6 @@ init_export(rhymeGraph);
 init_settings();
 
 // Get version
-const version_response = await fetch("/version");
+const version_response = await fetch("/api/version");
 const version = await version_response.json();
 console.log(version);

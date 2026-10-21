@@ -1,6 +1,6 @@
 from importlib.metadata import version
 from pathlib import Path
-
+import os
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from phonemizer.separator import Separator
@@ -28,12 +28,12 @@ class userInput(BaseModel):
     window_size: int
 
 
-@app.get("/lang")
+@app.get("/api/lang")
 async def get_supported_langs():
     return get_available_languages()
 
 
-@app.post("/generate")
+@app.post("/api/generate")
 async def generate_phoneme_graph(user_input: userInput):
 
     backend = init_backend(user_input.selected_lang)
@@ -45,9 +45,11 @@ async def generate_phoneme_graph(user_input: userInput):
     return data
 
 
-@app.get("/version")
+@app.get("/api/version")
 async def get_version():
     return __version__
 
 
-app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
+SERVE_FRONTEND = os.getenv("SERVE_FRONTEND", "true").lower() == "true"
+if SERVE_FRONTEND:
+    app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")

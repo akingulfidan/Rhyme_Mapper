@@ -5,7 +5,7 @@ export async function init_input(rhymeGraph) {
 
 // Language list dropdown
 async function init_language_select() {
-  let lang_response = await fetch("/lang");
+  let lang_response = await fetch("/api/lang");
   const languages = await lang_response.json();
 
   const lang_dropdown = document.getElementById("language");
@@ -29,7 +29,7 @@ function init_text_input(rhymeGraph, lang_dropdown) {
   const windowSize = document.getElementById("windowSize");
   
   genButton.addEventListener("click", async () => {
-    let response = await fetch("/generate", {
+    let response = await fetch("/api/generate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
