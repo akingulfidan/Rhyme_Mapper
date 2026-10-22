@@ -1,3 +1,10 @@
+/*
+Module for functionality related to filtering of rhyme paths.
+
+Code for Rhyme Mapper is refactored into modules which then expose select functionality to main.js via an exported init function.
+*/
+
+// See filter_functions.js for a detailed explanation of filters.
 import { min_length_filter, max_length_filter } from "./filter_functions.js";
 
 export function init_filters(rhymeGraph) {
@@ -36,7 +43,7 @@ function attach_filter(
     } else {
       filters.delete(criterion);
     }
-      rhymeGraph.filter(filters);
+    rhymeGraph.filter(filters);
   });
 
   filter_input.addEventListener("input", () => {
@@ -55,6 +62,7 @@ function attach_filter(
     
   });
 
+  // Push a callback to the Rhyme Graph to update max valuies of filters when new data comes in.
   rhymeGraph.onDataChanged.push(() => {
     filter_input.max = rhymeGraph.maxPathLength;
   });

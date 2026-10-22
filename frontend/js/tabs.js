@@ -1,3 +1,9 @@
+/*
+Module for functionality related to tabs.
+
+Code for Rhyme Mapper is refactored into modules which then expose select functionality to main.js via an exported init function.
+*/
+
 export function init_tabs() { 
   const tabs = document.querySelectorAll(".TabButton");
 

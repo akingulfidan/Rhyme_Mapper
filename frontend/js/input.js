@@ -1,3 +1,9 @@
+/*
+Module for functionality related to data input.
+
+Code for Rhyme Mapper is refactored into modules which then expose select functionality to main.js via an exported init function.
+*/
+
 export async function init_input(rhymeGraph) {
   const lang_dropdown = await init_language_select();
   init_text_input(rhymeGraph, lang_dropdown);
