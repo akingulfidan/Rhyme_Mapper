@@ -1,76 +1,61 @@
 import { min_length_filter, max_length_filter } from "./filter_functions.js";
 
 export function init_filters(rhymeGraph) {
-  const filters = new Set();
-  min_path_length_slider(rhymeGraph, filters);
-  max_path_length_slider(rhymeGraph, filters);
-}
+  // Function to initialize filters
 
-// Min Length Filter
-function min_path_length_slider(rhymeGraph, filters) {
+  const filters = new Set(); // Set of active filters
+
+  // Initialize min lenght filter
   const MinLengthFilter = document.getElementById("MinLength");
   const MinLengthFilterLabel = document.getElementById("MinLengthFilterValue");
   const EnableMinLengthFilter = document.getElementById("EnableMinLength");
+  attach_filter(rhymeGraph, filters, min_length_filter, MinLengthFilter, EnableMinLengthFilter, MinLengthFilterLabel);
 
-  let min_length = min_length_filter(Number(MinLengthFilter.value));
-
-  EnableMinLengthFilter.addEventListener("change", () => {
-    if (EnableMinLengthFilter.checked) {
-      filters.add(min_length);
-      rhymeGraph.filter(filters);
-    } else {
-      filters.delete(min_length);
-      rhymeGraph.filter(filters);
-    }
-  });
-
-  MinLengthFilter.addEventListener("input", () => {
-    const value = MinLengthFilter.value;
-    MinLengthFilterLabel.textContent = value;
-    if (EnableMinLengthFilter.checked) {
-      filters.delete(min_length);
-      min_length = min_length_filter(Number(value));
-      filters.add(min_length);
-      rhymeGraph.filter(filters);
-    }
-  });
-
-  rhymeGraph.onDataChanged.push(() => {
-    MinLengthFilter.max = rhymeGraph.maxPathLength;
-  });
-}
-
-// Max Length Filter
-function max_path_length_slider(rhymeGraph, filters) {
+  // Initialize max length filter
   const MaxLengthFilter = document.getElementById("MaxLength");
   const MaxLengthFilterLabel = document.getElementById("MaxLengthFilterValue");
   const EnableMaxLengthFilter = document.getElementById("EnableMaxLength");
+  attach_filter(rhymeGraph, filters, max_length_filter, MaxLengthFilter,EnableMaxLengthFilter ,MaxLengthFilterLabel);
+}
 
-  let max_length = max_length_filter(Number(MaxLengthFilter.value));
+function attach_filter(
+  rhymeGraph,
+  filters,
+  filter_function,
+  filter_input,
+  filter_enable,
+  filter_label,
+) {
+  // Sets the first instance of the criterion with default input value.
+  let criterion = filter_function(Number(filter_input.value));
 
-  EnableMaxLengthFilter.addEventListener("change", () => {
-    filters.add(max_length);
-    filters.delete(max_length);
-
-    if (EnableMaxLengthFilter.checked) {
-      rhymeGraph.filter(filters);
+  filter_enable.addEventListener("change", () => {
+    // If filter is enabled or disable add or remove the filter function from filters and call filter.
+    if (filter_enable.checked) {
+      filters.add(criterion);
+    } else {
+      filters.delete(criterion);
     }
+      rhymeGraph.filter(filters);
   });
 
-  MaxLengthFilter.addEventListener("input", () => {
-    const value = MaxLengthFilter.value;
-    MaxLengthFilterLabel.textContent = value;
+  filter_input.addEventListener("input", () => {
+    // When filter value is changed update the filter function with the new value and if the filter is enabled call filter.
 
-    filters.delete(max_length);
-    max_length = max_length_filter(Number(value));
-    filters.add(max_length);
+    const value = filter_input.value;
+    filter_label.textContent = value; // Update Input Label
 
-    if (EnableMaxLengthFilter.checked) {
+    filters.delete(criterion);
+    criterion = filter_function(Number(value));
+
+    if (filter_enable.checked) {
+      filters.add(criterion);
       rhymeGraph.filter(filters);
     }
+    
   });
 
   rhymeGraph.onDataChanged.push(() => {
-    MaxLengthFilter.max = rhymeGraph.maxPathLength;
+    filter_input.max = rhymeGraph.maxPathLength;
   });
 }
