@@ -46,7 +46,7 @@ Rhyme Mapper is accessible at http://localhost:8000
 
 - [ ] Allow selecting phones in the visualization
 - [ ] Display information on selected words and phones
-- [ ] Line numbers on the text area and the visualization.
+- [x] Line numbers on the text area and the visualization.
 - [ ] Better rhyme path filtering tools.
 - [ ] Improve documentation.
 
