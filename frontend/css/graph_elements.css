@@ -1,4 +1,4 @@
-
+/* Styles for elements present in the rhyme graph*/
 .Phoneme {
     fill: transparent;
     stroke: var(--phoneme_color);

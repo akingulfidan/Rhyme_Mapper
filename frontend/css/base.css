@@ -2,10 +2,15 @@
 @import url("./font.css");
 @import url("./tabs.css");
 @import url("./graph_elements.css");
+@import url("./editor.css");
+
+html, body {
+    margin: 0;
+    height: 100%;
+}
 
 body {
   display: flex;
-  margin: 0px;
   background-color: var(--background);
   font-family: "suse";
   color: var(--text_color);
@@ -13,30 +18,15 @@ body {
 
 select,
 input,
-textarea,
 button {
   font-family: "suse";
   color: var(--text_color);
   background-color: var(--background);
   border-radius: 5px;
-  font-size: 14pt;
+  font-size: 12pt;
   border: 1px solid var(--accent);
   font-weight: 400;
   background-color: var(--secondary);
-}
-
-#textInput {
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  resize: none;
-  margin-top: 3px;
-  margin-bottom: 3px;
-}
-
-#language {
-  margin-top: 3px;
-  margin-bottom: 3px;
 }
 
 #inputContainer {
@@ -47,45 +37,4 @@ button {
   flex-direction: column;
   background-color: var(--background);
   border-left: 2px solid var(--accent);
-}
-
-#GenerateButton {
-  margin-top: 3px;
-  margin-bottom: 3px;
-}
-
-.InputRow {
-  display: flex;
-  align-items: center;
-  margin-top: 10px;
-}
-
-.InputRow label {
-  font-size: 12pt;
-  margin: 0 5px;
-  text-align: center;
-  flex: 0 0 auto;
-}
-
-.InputRow input[type="checkbox"] {
-  flex: 0 0 auto;
-}
-
-.InputRow input[type="range"] {
-  flex: 1;
-  min-width: 0;
-}
-
-.InputRow input[type="number"] {
-  flex: 1;
-  min-width: 0;
-}
-
-.InputRow select {
-  flex: 1;
-  min-width: 0;
-}
-
-.InputRow button {
-  flex: 1;
 }

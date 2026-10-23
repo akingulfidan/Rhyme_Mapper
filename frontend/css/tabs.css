@@ -1,6 +1,8 @@
+/* Styles for tabs */
 #tabs {
   display: flex;
   flex-direction: row;
+  justify-content: space-evenly;
   margin-bottom: 10px;
 }
 
@@ -32,16 +34,67 @@
   background: var(--accent);
 }
 
+/* Styles for Tab content panels */
 .TabContent {
   display: flex;
-  flex-grow: 0;
   flex-direction: column;
-}
-
-#input {
-  flex: 1;
+  min-height: 0;
 }
 
 .TabContent[hidden] {
   display: none;
 }
+/* Styles for input rows */
+.InputRow {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.InputRow label {
+  font-size: 12pt;
+  margin: 0 5px;
+  text-align: center;
+  flex: 0 0 auto;
+}
+
+.InputRow input[type="checkbox"] {
+  flex: 0 0 auto;
+}
+
+.InputRow input[type="range"] {
+  flex: 1;
+  min-width: 0;
+}
+
+.InputRow input[type="number"] {
+  flex: 1;
+  min-width: 0;
+}
+
+.InputRow select {
+  flex: 1;
+  min-width: 0;
+}
+
+.InputRow button {
+  flex: 1;
+}
+
+/* Styles for the input tab*/
+#input {
+  flex: 1;
+}
+
+#GenerateButton {
+  margin-top: 5px;
+}
+
+#language {
+  margin-bottom: 5px;
+}
+
+
+
+
+

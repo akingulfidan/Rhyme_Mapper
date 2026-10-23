@@ -4,6 +4,8 @@ Module for functionality related to data input.
 Code for Rhyme Mapper is refactored into modules which then expose select functionality to main.js via an exported init function.
 */
 
+import {drawSelection, EditorView, lineNumbers} from "@codemirror/view";
+
 export async function init_input(rhymeGraph) {
   const lang_dropdown = await init_language_select();
   init_text_input(rhymeGraph, lang_dropdown);
@@ -30,7 +32,18 @@ async function init_language_select() {
 
 // Textarea and generate button
 function init_text_input(rhymeGraph, lang_dropdown) {
-  const textInput = document.getElementById("textInput");
+
+  const textInput = new EditorView({
+
+    doc: "Enter text to analyse here...",
+    parent: document.getElementById("editorContainer"),
+    extensions: [
+      lineNumbers(),
+      drawSelection(),
+      EditorView.lineWrapping
+    ]
+  });
+
   const genButton = document.getElementById("GenerateButton");
   const windowSize = document.getElementById("windowSize");
   
@@ -42,12 +55,11 @@ function init_text_input(rhymeGraph, lang_dropdown) {
       },
       body: JSON.stringify({
         selected_lang: lang_dropdown.value,
-        input_text: textInput.value,
+        input_text: textInput.state.doc.toString(),
         window_size: windowSize.value
       }),
     });
     let result = await response.json();
-
     rhymeGraph.inputData(
       result["lexicon"],
       result["word_array"],
@@ -55,3 +67,4 @@ function init_text_input(rhymeGraph, lang_dropdown) {
     );
   });
 }
+

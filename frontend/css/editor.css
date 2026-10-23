@@ -1,0 +1,38 @@
+#editorContainer {
+    flex: 1;
+    min-height: 0;
+}
+
+.cm-editor{
+    height: 100%;
+    background-color: var(--secondary);
+    border-radius: 5px;
+    min-height: 0;
+}   
+.ͼ1 .cm-scroller {
+    overflow: scroll;
+    font-family: "suse"; 
+    border-radius: 5px;
+    font-size: 15px;
+    font-weight: 100;
+    min-height: 0;
+
+}
+.ͼ1 .cm-lineNumbers .cm-gutterElement {
+	padding: 0 3px 0 5px;
+	min-width: 20px;
+	text-align: right;
+	white-space: nowrap;
+}
+
+.ͼ2 .cm-gutters{
+    background-color: var(--accent);
+    color: var(--text_color);
+    border: 0;
+}
+.cm-editor .cm-content { 
+    font-family: "suse";
+    font-size: 15px;
+    font-weight: 400;
+}
+
