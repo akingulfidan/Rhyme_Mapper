@@ -17,3 +17,16 @@
     fill: transparent;
     stroke-width: 2px;
 }
+
+.LineNumber {
+  font-family: "suse";
+  font-weight: 100;
+  fill: var(--text_color);
+  dominant-baseline: middle;
+}
+
+.LineNumberDivider {
+  stroke: var(--accent);
+  stroke-width: 1px;
+  stroke-linecap: round;
+}
