@@ -1,3 +1,8 @@
+/*
+Styles for CodeMirror6 Editor
+For reference: https://codemirror.net/examples/styling/
+*/
+
 #editorContainer {
     flex: 1;
     min-height: 0;
