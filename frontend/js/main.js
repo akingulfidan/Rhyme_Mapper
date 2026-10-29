@@ -16,7 +16,7 @@ window.addEventListener("resize", () => {
 
 // Initialize modules
 init_tabs();
-await init_input(rhymeGraph);
+init_input(rhymeGraph);
 init_filters(rhymeGraph);
 init_parameters(rhymeGraph);
 init_export(rhymeGraph);
